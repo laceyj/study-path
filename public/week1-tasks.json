@@ -1,0 +1,240 @@
+[
+  {
+    "id": "comptia-mb-formfactors",
+    "title": "Motherboard Form Factors",
+    "description": "Learn about standard motherboard sizes (ATX, Micro-ATX, Mini-ITX) and their use cases",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": [],
+    "priority": 1,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "linux-vm-setup",
+    "title": "VirtualBox and Ubuntu Linux Setup",
+    "description": "Download and install VirtualBox and set up Ubuntu Linux VM",
+    "category": "linux",
+    "estimatedMinutes": 30,
+    "dependencies": [],
+    "priority": 1,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "linux-vm-setup-guide",
+        "title": "Follow VirtualBox Setup Guide",
+        "category": "linux",
+        "estimatedMinutes": 20,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-vm-screenshots",
+        "content": "Take screenshots of each step for your reference to make troubleshooting easier if issues arise later"
+      }
+    ]
+  },
+  {
+    "id": "comptia-mb-components",
+    "title": "Motherboard Components",
+    "description": "Study the major components on a motherboard including chipset, socket, slots, and headers",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-mb-formfactors"],
+    "priority": 1,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "linux-first-login",
+    "title": "Linux Desktop Exploration",
+    "description": "First login to your Linux VM and explore the desktop environment",
+    "category": "linux",
+    "estimatedMinutes": 30,
+    "dependencies": ["linux-vm-setup"],
+    "priority": 1,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "linux-desktop-basics",
+        "title": "Linux Desktop Environment Basics",
+        "category": "linux",
+        "estimatedMinutes": 20,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-linux-impressions",
+        "content": "Create a \"first impressions\" log noting key differences from Windows/Mac to help solidify your learning"
+      }
+    ]
+  },
+  {
+    "id": "comptia-cpu-characteristics",
+    "title": "CPU Characteristics",
+    "description": "Learn about CPU architectures, specifications, and core features",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-mb-components"],
+    "priority": 1,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "linux-terminal-basics",
+    "title": "Linux Terminal Basics",
+    "description": "Learn essential Linux terminal commands and navigation",
+    "category": "linux",
+    "estimatedMinutes": 30,
+    "dependencies": ["linux-first-login"],
+    "priority": 1,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "linux-basic-commands",
+        "title": "Practice Basic Commands: ls, cd, pwd, mkdir, touch",
+        "category": "linux",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "comptia-cpu-technologies",
+    "title": "CPU Technologies",
+    "description": "Explore advanced CPU technologies including virtualization, multi-threading, and cache",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-cpu-characteristics"],
+    "priority": 1,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "linux-terminal-practice",
+    "title": "Advanced Terminal Practice",
+    "description": "Further practice with Linux terminal commands and file manipulation",
+    "category": "linux",
+    "estimatedMinutes": 30,
+    "dependencies": ["linux-terminal-basics"],
+    "priority": 1,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "linux-directory-structure",
+        "title": "Create a Simple Directory Structure",
+        "category": "linux",
+        "estimatedMinutes": 20,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-terminal-cheatsheet",
+        "content": "Create a terminal commands cheat sheet with color-coding to make it easier to reference and remember commands"
+      }
+    ]
+  },
+  {
+    "id": "comptia-ram-types",
+    "title": "RAM Types",
+    "description": "Study different RAM types including DDR versions, DIMM types, and ECC vs non-ECC",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-cpu-technologies"],
+    "priority": 1,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "comptia-ram-technologies",
+    "title": "RAM Technologies",
+    "description": "Learn about RAM technologies including timings, multi-channel memory, and RAM specifications",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-ram-types"],
+    "priority": 1,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "comptia-ram-comparison",
+        "title": "Create a Comparison Chart of RAM Types",
+        "category": "comptia",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "comptia-quiz-memory",
+        "title": "Memory and CPU Quiz (10 questions)",
+        "category": "review",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "comptia-ram-troubleshooting",
+    "title": "RAM Troubleshooting",
+    "description": "Learn memory diagnostics and common RAM failure symptoms",
+    "category": "comptia",
+    "estimatedMinutes": 45,
+    "dependencies": ["comptia-ram-technologies"],
+    "priority": 1,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "comptia-ram-troubleshoot-flowchart",
+        "title": "Create Memory Troubleshooting Flowchart",
+        "category": "comptia",
+        "estimatedMinutes": 20,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "linux-filesystem",
+    "title": "Linux File System Exploration",
+    "description": "Learn Linux directory structure and filesystem hierarchy",
+    "category": "linux",
+    "estimatedMinutes": 45,
+    "dependencies": ["linux-terminal-practice"],
+    "priority": 1,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "linux-filesystem-explained",
+        "title": "Linux File System Explained",
+        "category": "linux",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "linux-directory-navigation",
+        "title": "Practice Navigating Directory Structures",
+        "category": "linux",
+        "estimatedMinutes": 20,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-filesystem-map",
+        "content": "Draw a visual map of the Linux directory structure to help you remember the locations of important files and folders"
+      }
+    ]
+  }
+]

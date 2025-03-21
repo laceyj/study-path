@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Study Path Tracker</title>
+    
+    <!-- Meta tags for better mobile experience -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Study Path">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-storage-compat.js"></script>
+    <!-- Scripts in the correct order -->
+    <script src="firebase-config.js"></script>
+    <script src="study-scheduler.js"></script>
+    <script src="app.js"></script>
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.1/dist/cdn.min.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="styles.css?v=1.2">
+    
+    <!-- Debug helpers -->
+    <script src="debug-helpers.js"></script>
+</head>
+<body :class="{ 'dark-mode': darkMode }" x-data="app()" x-init="initialize()">
+    
+    <!-- Main App Layout -->
+    <div class="app-layout">
+        <!-- Authentication Modal -->
+        <div id="auth-modal" class="modal" x-show="showAuthModal" x-transition>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 x-text="authMode === 'signin' ? 'Sign In' : 'Create Account'"></h2>
+                    <button class="close-button" @click="showAuthModal = false">&times;</button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="alert alert-danger" x-show="authError" x-text="authError"></div>
+                    
+                    <form id="auth-form" @submit.prevent="handleAuth">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" class="form-control" x-model="authEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" class="form-control" x-model="authPassword" required>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="button secondary" @click="toggleAuthMode" x-text="authMode === 'signin' ? 'Create an account' : 'Already have an account?'"></button>
+                            <button type="submit" class="button primary" x-text="authMode === 'signin' ? 'Sign In' : 'Sign Up'"></button>
+                        </div>
+                        
+                        <p class="form-hint text-center" x-show="authMode === 'signin'">
+                            <a href="#" @click.prevent="resetPassword">Forgot password?</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settings-modal" class="modal" x-show="showSettingsModal" x-transition>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>User Preferences</h2>
+                    <button class="close-button" @click="showSettingsModal = false">&times;</button>
+                </div>
+                
+                <div class="modal-body">
+                    <form id="preferences-form">
+                        <!-- Study Schedule Settings -->
+                        <h3>Study Schedule</h3>
+                        
+                        <div class="form-group">
+                            <label for="weekday-time">Study time on weekdays (minutes):</label>
+                            <input type="number" id="weekday-time" class="form-control" x-model="preferences.studyMinutesPerWeekday" min="15" max="240" step="15">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="weekend-time">Study time on weekends (minutes):</label>
+                            <input type="number" id="weekend-time" class="form-control" x-model="preferences.studyMinutesPerWeekendDay" min="15" max="360" step="15">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="start-date">Start date:</label>
+                            <input type="date" id="start-date" class="form-control" x-model="preferences.startDate">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="pacing">Study pace:</label>
+                            <select id="pacing" class="form-control" x-model="preferences.pacing">
+                                <option value="relaxed">Relaxed (fewer tasks per day)</option>
+                                <option value="balanced">Balanced (moderate pace)</option>
+                                <option value="intense">Intense (more tasks per day)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- UI Appearance Settings -->
+                        <h3>Appearance</h3>
+                        
+                        <div class="form-group">
+                            <label>Theme:</label>
+                            <div class="toggle-group">
+                                <button type="button" class="toggle-button" :class="{ active: !darkMode }" @click.prevent="darkMode = false">Light</button>
+                                <button type="button" class="toggle-button" :class="{ active: darkMode }" @click.prevent="darkMode = true">Dark</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Font Size:</label>
+                            <div class="toggle-group">
+                                <button type="button" class="toggle-button" :class="{ active: fontSize === 'small' }" @click.prevent="fontSize = 'small'">Small</button>
+                                <button type="button" class="toggle-button" :class="{ active: fontSize === 'medium' }" @click.prevent="fontSize = 'medium'">Medium</button>
+                                <button type="button" class="toggle-button" :class="{ active: fontSize === 'large' }" @click.prevent="fontSize = 'large'">Large</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Excluded Dates -->
+                        <h3>Excluded Dates</h3>
+                        <p class="form-hint">Add dates you want to skip (vacations, holidays, etc.)</p>
+                        
+                        <div class="form-group">
+                            <div class="excluded-dates">
+                                <template x-if="preferences.excludedDates && preferences.excludedDates.length > 0">
+                                    <div class="excluded-date-list">
+                                        <template x-for="(date, index) in preferences.excludedDates" :key="date">
+                                            <div class="excluded-date-item">
+                                                <span x-text="formatDate(date)"></span>
+                                                <button type="button" class="close-button" @click="removeExcludedDate(index)">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                                
+                                <template x-if="!preferences.excludedDates || preferences.excludedDates.length === 0">
+                                    <p>No excluded dates added yet.</p>
+                                </template>
+                                
+                                <div class="add-excluded-date">
+                                    <input type="date" id="new-excluded-date" class="form-control" x-model="newExcludedDate">
+                                    <button type="button" class="button" @click="addExcludedDate">Add</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="button secondary" @click="showSettingsModal = false">Cancel</button>
+                    <button type="button" class="button primary" @click="saveSettings">Save Preferences</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Header -->
+        <header class="app-header">
+            <div class="container">
+                <div class="header-container">
+                    <div class="header-top">
+                        <div class="header-brand">
+                            <img src="studypathlogo.png" alt="Study Path Tracker" class="app-logo">
+                            <!-- <h1 class="app-title">Study Path Tracker</h1> -->
+                        </div>
+                        
+                        <div class="user-section">
+                            <template x-if="user">
+                                <div class="user-dropdown">
+                                    <div class="user-avatar" @click="toggleUserMenu">
+                                        <template x-if="user.photoURL">
+                                            <img :src="user.photoURL" alt="User avatar">
+                                        </template>
+                                        <template x-if="!user.photoURL">
+                                            <span x-text="getUserInitial()"></span>
+                                        </template>
+                                    </div>
+                                    <div class="dropdown-content" x-show="showUserMenu" @click.outside="showUserMenu = false">
+                                        <div class="user-email" x-text="user.email"></div>
+                                        <a href="#" @click.prevent="showSettingsModal = true">
+                                            <i class="fas fa-cog"></i> Settings
+                                        </a>
+                                        <a href="#" @click.prevent="signOut">
+                                            <i class="fas fa-sign-out-alt"></i> Sign Out
+                                        </a>
+                                    </div>
+                                </div>
+                            </template>
+                            
+                            <template x-if="!user">
+                                <button class="button compact" @click="showAuthModal = true">Sign In</button>
+                            </template>
+                        </div>
+                    </div>
+                    
+                    <div class="sync-status" :class="{ 'syncing': syncStatus === 'syncing', 'error': syncStatus === 'error' }">
+                        <template x-if="syncStatus === 'synced'">
+                            <span><i class="fas fa-cloud-upload-alt"></i> Synced with cloud</span>
+                        </template>
+                        <template x-if="syncStatus === 'syncing'">
+                            <span><i class="fas fa-sync"></i> Syncing with cloud...</span>
+                        </template>
+                        <template x-if="syncStatus === 'error'">
+                            <span><i class="fas fa-exclamation-triangle"></i> Sync error - using local storage</span>
+                        </template>
+                        <template x-if="syncStatus === 'offline'">
+                            <span><i class="fas fa-save"></i> Using local storage (offline)</span>
+                        </template>
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Overall Progress</span>
+                            <span x-text="overallProgress + '%'"></span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" :style="`width: ${overallProgress}%`"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Desktop Navigation Tabs -->
+                    <div class="desktop-tabs desktop-only">
+                        <a href="#dashboard" class="tab-link" :class="{ active: activeTab === 'dashboard' }" @click.prevent="setActiveTab('dashboard')">
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                        <a href="#schedule" class="tab-link" :class="{ active: activeTab === 'schedule' }" @click.prevent="setActiveTab('schedule')">
+                            <i class="fas fa-calendar-alt"></i> Schedule
+                        </a>
+                        <a href="#tasks" class="tab-link" :class="{ active: activeTab === 'tasks' }" @click.prevent="setActiveTab('tasks')">
+                            <i class="fas fa-tasks"></i> Tasks
+                        </a>
+                        <a href="#stats" class="tab-link" :class="{ active: activeTab === 'stats' }" @click.prevent="setActiveTab('stats')">
+                            <i class="fas fa-chart-bar"></i> Stats
+                        </a>
+                    </div>
+                    
+                    <!-- Category Legend -->
+                    <div class="category-legend">
+                        <div class="legend-item">
+                            <span class="category-tag tag-comptia">C</span>
+                            <span>CompTIA A+</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="category-tag tag-linux">L</span>
+                            <span>Linux Skills</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="category-tag tag-git">G</span>
+                            <span>Git & GitHub</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="category-tag tag-python">P</span>
+                            <span>Python</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="category-tag tag-review">R</span>
+                            <span>Review</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="category-tag tag-adhd">A</span>
+                            <span>ADHD Tips</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <!-- Dashboard Tab -->
+                <div id="dashboard-tab" class="tab-content" x-show="activeTab === 'dashboard'">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Your Study Plan</h2>
+                        </div>
+                        <div class="card-body">
+                            <!-- Status Stats -->
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-title">Estimated Completion</div>
+                                    <div class="stat-value" x-text="estimatedCompletionDate ? formatDate(estimatedCompletionDate) : 'N/A'"></div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-title">Time Saved</div>
+                                    <div class="stat-value" x-text="timeSaved.days + ' days, ' + timeSaved.hours + ' hrs'"></div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-title">Tasks Completed</div>
+                                    <div class="stat-value" x-text="completedTaskCount + '/' + totalTaskCount"></div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-title">Study Hours</div>
+                                    <div class="stat-value" x-text="completedStudyHours + ' hours'"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Dashboard Main Content -->
+                            <div class="dashboard-grid">
+                                <div class="today-tasks">
+                                    <h3>Today's Tasks</h3>
+                                    <template x-if="todaysTasks.length > 0">
+                                        <div class="task-list-container" x-html="renderTaskList(todaysTasks)"></div>
+                                    </template>
+                                    <template x-if="todaysTasks.length === 0">
+                                        <div class="empty-state">
+                                            <p>No tasks scheduled for today. Enjoy your break!</p>
+                                        </div>
+                                    </template>
+                                </div>
+                                
+                                <div class="upcoming-preview">
+                                    <h3>Upcoming Schedule</h3>
+                                    <template x-if="upcomingDays.length > 0">
+                                        <div class="calendar-grid">
+                                            <template x-for="day in upcomingDays" :key="day.dayIndex">
+                                                <div class="calendar-day" :class="{ today: isToday(day.date) }" @click="viewDayDetails(day)">
+                                                    <div class="calendar-date">
+                                                        <div class="calendar-day-name" x-text="getDayName(day.date)"></div>
+                                                        <div class="calendar-day-number" x-text="new Date(day.date).getDate()"></div>
+                                                    </div>
+                                                    <div class="calendar-tasks">
+                                                        <div class="task-count" x-text="day.tasks.length + ' tasks'"></div>
+                                                        <div class="study-time" x-text="formatStudyTime(day)"></div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                    <template x-if="upcomingDays.length === 0">
+                                        <div class="empty-state">
+                                            <p>No upcoming tasks scheduled.</p>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Schedule Tab -->
+                <div id="schedule-tab" class="tab-content" x-show="activeTab === 'schedule'">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Complete Study Schedule</h2>
+                            <div class="completion-date">
+                                Estimated completion: <strong x-text="estimatedCompletionDate ? formatDate(estimatedCompletionDate) : 'N/A'"></strong>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="schedule-timeline">
+                                <template x-for="(days, month) in calendarByMonth" :key="month">
+                                    <div class="schedule-month">
+                                        <h3 x-text="month"></h3>
+                                        <div class="calendar-grid">
+                                            <template x-for="day in days" :key="day.dayIndex">
+                                                <div class="calendar-day" :class="{ 'today': isToday(day.date), 'past': isPastDay(day.date) }" @click="viewDayDetails(day)">
+                                                    <div class="calendar-date">
+                                                        <div class="calendar-day-name" x-text="getDayName(day.date)"></div>
+                                                        <div class="calendar-day-number" x-text="new Date(day.date).getDate()"></div>
+                                                    </div>
+                                                    <div class="day-tasks">
+                                                        <!-- For each task in the day, display a compact version -->
+                                                        <template x-if="day.tasks && day.tasks.length > 0">
+                                                            <div class="day-task-list">
+                                                                <template x-for="(task, taskIndex) in day.tasks.slice(0, 2)" :key="taskIndex">
+                                                                    <div class="day-task-item" :class="{'completed': task.completed}">
+                                                                        <span x-text="task.title" class="task-title"></span>
+                                                                        <span :class="'category-tag tag-' + task.category" x-text="getCategoryLabel(task.category)"></span>
+                                                                    </div>
+                                                                </template>
+                                                                <!-- Show more indicator if there are more than 2 tasks -->
+                                                                <div class="more-tasks" x-show="day.tasks.length > 2" x-text="'+ ' + (day.tasks.length - 2) + ' more'"></div>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tasks Tab -->
+                <div id="tasks-tab" class="tab-content" x-show="activeTab === 'tasks'">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">All Tasks by Week</h2>
+                            <div class="tasks-filter">
+                                <select class="form-control" x-model="tasksFilter">
+                                    <option value="all">All Tasks</option>
+                                    <option value="incomplete">Incomplete Tasks</option>
+                                    <option value="completed">Completed Tasks</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <template x-if="weeksWithTasks.length > 0">
+                                <div class="weeks-container">
+                                    <template x-for="week in weeksWithTasks" :key="week">
+                                        <div class="week-container" :data-week="week">
+                                            <div class="week-header" @click="toggleWeek(week)">
+                                                <h3 x-text="'Week ' + week"></h3>
+                                                <div class="week-header-right">
+                                                    <span class="week-percentage" x-text="weekProgress[week] + '%'"></span>
+                                                    <button class="toggle-week">
+                                                        <i class="fas" :class="expandedWeeks.includes(week) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar">
+                                                    <div class="progress-fill" :style="`width: ${weekProgress[week]}%`"></div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="week-content" :class="{ collapsed: !expandedWeeks.includes(week) }">
+                                                <template x-for="category in getWeekCategories(week)" :key="category">
+                                                    <div class="category-section">
+                                                        <h4 class="category-header">
+                                                            <span class="category-tag" :class="`tag-${category}`" x-text="getCategoryLabel(category)"></span>
+                                                            <span x-text="getCategoryName(category)"></span>
+                                                        </h4>
+                                                        
+                                                        <div x-html="renderTaskList(getTasksByWeekAndCategory(week, category), false, true)"></div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                            
+                            <template x-if="weeksWithTasks.length === 0">
+                                <div class="empty-state">
+                                    <p>No tasks available. Please check your filters or try refreshing the page.</p>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stats Tab -->
+                <div id="stats-tab" class="tab-content" x-show="activeTab === 'stats'">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Learning Statistics</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="stats-overview">
+                                <div class="stat-card">
+                                    <div class="stat-title">Overall Completion</div>
+                                    <div class="stat-value" x-text="overallProgress + '%'"></div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" :style="`width: ${overallProgress}%`"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="stat-card">
+                                    <div class="stat-title">Tasks Completed</div>
+                                    <div class="stat-value" x-text="completedTaskCount + '/' + totalTaskCount"></div>
+                                </div>
+                                
+                                <div class="stat-card">
+                                    <div class="stat-title">Study Time</div>
+                                    <div class="stat-value" x-text="completedStudyHours + ' hours'"></div>
+                                </div>
+                                
+                                <div class="stat-card">
+                                    <div class="stat-title">Est. Finish Date</div>
+                                    <div class="stat-value" x-text="estimatedCompletionDate ? formatDate(estimatedCompletionDate) : 'N/A'"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="stats-charts">
+                                <!-- Category Progress Chart -->
+                                <div class="stats-chart">
+                                    <h3>Progress by Category</h3>
+                                    <div class="category-progress-chart">
+                                        <template x-for="category in allCategories" :key="category">
+                                            <div class="progress-chart-item">
+                                                <div class="progress-chart-header">
+                                                    <span class="category-tag" :class="`tag-${category}`" x-text="getCategoryLabel(category)"></span>
+                                                    <span x-text="getCategoryName(category)"></span>
+                                                </div>
+                                                <div class="progress-chart-bar">
+                                                    <div class="progress-bar" style="flex: 1">
+                                                        <div class="progress-fill" :class="`bg-${category}`" :style="`width: ${getCategoryProgress(category)}%`"></div>
+                                                    </div>
+                                                    <span class="progress-chart-percentage" x-text="getCategoryProgress(category) + '%'"></span>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                                
+                                <!-- Weekly Progress Chart -->
+                                <div class="stats-chart">
+                                    <h3>Weekly Progress</h3>
+                                    <div class="weekly-progress-chart">
+                                        <template x-for="weekNum in Object.keys(weekProgress).sort((a, b) => a - b)" :key="weekNum">
+                                            <div class="progress-chart-item">
+                                                <div class="progress-chart-header">
+                                                    <span x-text="'Week ' + weekNum"></span>
+                                                </div>
+                                                <div class="progress-chart-bar">
+                                                    <div class="progress-bar" style="flex: 1">
+                                                        <div class="progress-fill" :style="`width: ${weekProgress[weekNum]}%`"></div>
+                                                    </div>
+                                                    <span class="progress-chart-percentage" x-text="weekProgress[weekNum] + '%'"></span>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Mobile Navigation Tabs -->
+        <div class="mobile-tabs mobile-only">
+            <div class="tabs-container">
+                <a href="#dashboard" class="tab-link" :class="{ active: activeTab === 'dashboard' }" @click.prevent="setActiveTab('dashboard')">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#schedule" class="tab-link" :class="{ active: activeTab === 'schedule' }" @click.prevent="setActiveTab('schedule')">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Schedule</span>
+                </a>
+                <a href="#tasks" class="tab-link" :class="{ active: activeTab === 'tasks' }" @click.prevent="setActiveTab('tasks')">
+                    <i class="fas fa-tasks"></i>
+                    <span>Tasks</span>
+                </a>
+                <a href="#stats" class="tab-link" :class="{ active: activeTab === 'stats' }" @click.prevent="setActiveTab('stats')">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Stats</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Floating Action Menu -->
+        <div class="floating-action-menu">
+            <button class="fab-button" :class="{ 'active': showActionMenu }" @click="toggleActionMenu">
+                <i class="fas" :class="showActionMenu ? 'fa-times' : 'fa-ellipsis-h'"></i>
+            </button>
+            
+            <div class="fab-menu" x-show="showActionMenu" x-transition>
+                <button class="fab-item" @click="exportProgress">
+                    <i class="fas fa-download"></i>
+                    <span>Export Progress</span>
+                </button>
+                <button class="fab-item" @click="showImportDialog">
+                    <i class="fas fa-upload"></i>
+                    <span>Import Progress</span>
+                </button>
+                <button class="fab-item" @click="regenerateSchedule">
+                    <i class="fas fa-sync"></i>
+                    <span>Regenerate Schedule</span>
+                </button>
+                <button class="fab-item danger" @click="confirmResetProgress">
+                    <i class="fas fa-trash"></i>
+                    <span>Reset Progress</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Day Details Modal -->
+        <div id="day-details-modal" class="modal" x-show="selectedDay !== null" x-transition>
+            <div class="modal-content" @click.outside="selectedDay = null">
+                <span class="close-button" @click="selectedDay = null">&times;</span>
+                <template x-if="selectedDay">
+                    <div>
+                        <h2 x-text="formatDate(selectedDay.date)"></h2>
+                        <div class="day-details">
+                            <div class="day-details-meta">
+                                <div class="day-type" x-text="selectedDay && selectedDay.isWeekend ? 'Weekend' : 'Weekday'"></div>
+                                <div class="study-time" x-text="formatStudyTime(selectedDay)"></div>
+                            </div>
+                            <div class="day-details-tasks">
+                                <h3>Tasks for this day (<span x-text="selectedDay && selectedDay.tasks ? selectedDay.tasks.length : 0"></span>)</h3>
+                    
+                    <!-- Check if tasks exist and are not empty -->
+                    <template x-if="selectedDay && selectedDay.tasks && selectedDay.tasks.length > 0">
+                        <div x-html="renderTaskList(selectedDay.tasks)"></div>
+                    </template>
+                    
+                    <!-- Show message if no tasks -->
+                    <template x-if="!selectedDay || !selectedDay.tasks || selectedDay.tasks.length === 0">
+                        <p>No tasks scheduled for this day.</p>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container">
+            <template x-for="toast in toasts" :key="toast.id">
+                <div class="toast" :class="toast.type" x-transition x-text="toast.message"></div>
+            </template>
+        </div>
+
+        <!-- Hidden Input for Import -->
+        <input type="file" id="import-progress" accept=".json" style="display: none;" @change="importProgress">
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Document loaded, checking setup...");
+            
+            // Verify Firebase is initialized
+            if (typeof firebase !== 'undefined') {
+                console.log("Firebase is available");
+                
+                // Test localStorage access
+                try {
+                    localStorage.setItem('test', 'ok');
+                    const test = localStorage.getItem('test');
+                    console.log("localStorage access:", test === 'ok' ? 'Working' : 'Failed');
+                } catch (e) {
+                    console.error("localStorage access error:", e);
+                }
+
+                // Add classes for responsive design based on screen size
+                function updateLayoutClasses() {
+                    if (window.innerWidth < 768) {
+                        document.body.classList.add('mobile-layout');
+                        document.body.classList.remove('desktop-layout');
+                    } else {
+                        document.body.classList.add('desktop-layout');
+                        document.body.classList.remove('mobile-layout');
+                    }
+                }
+
+                // Initial call and listen for resize
+                updateLayoutClasses();
+                window.addEventListener('resize', updateLayoutClasses);
+            } else {
+                console.error("Firebase is not initialized!");
+            }
+        });
+    </script>
+    <script>
+        // Ensure app is defined before Alpine initializes
+        document.addEventListener('alpine:init', () => {
+          console.log("Alpine init event fired");
+          if (typeof window.app !== 'function') {
+            console.error("App function not found! Creating emergency fallback.");
+            // Create a minimal emergency app function
+            window.app = function() {
+              return {
+                activeTab: 'dashboard',
+                darkMode: false,
+                initialize() {
+                  console.log("Emergency initialization");
+                  alert("Application error: Full functionality not available. Please reload the page.");
+                },
+                setActiveTab(tab) {
+                  this.activeTab = tab;
+                }
+              };
+            };
+          }
+        });
+      </script>
+</body>
+</html>

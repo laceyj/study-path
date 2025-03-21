@@ -1,0 +1,2072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Path Admin</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-storage-compat.js"></script>
+    <!-- PDF.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.1/dist/cdn.min.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Admin interface styles */
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
+            --accent-color: #4cb5f5;
+            --bg-color: #f5f5f7;
+            --card-bg-color: #ffffff;
+            --text-color: #333333;
+            --text-muted: #757575;
+            --border-color: #e0e0e0;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        /* Dark mode color scheme */
+        .dark-mode {
+            --primary-color: #5a89c6;
+            --secondary-color: #2c7fb8;
+            --accent-color: #64c6ff;
+            --bg-color: #121212;
+            --card-bg-color: #1e1e1e;
+            --text-color: #e0e0e0;
+            --text-muted: #9e9e9e;
+            --border-color: #2c2c2c;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            padding-bottom: 60px;
+            transition: var(--transition);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        header {
+            background-color: var(--card-bg-color);
+            padding: 1.5rem 1rem;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            margin-bottom: 2rem;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0;
+        }
+        
+        h2 {
+            color: var(--secondary-color);
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+        
+        h3 {
+            color: var(--text-color);
+            margin: 0.8rem 0;
+            font-weight: 500;
+        }
+        
+        button, .button {
+            cursor: pointer;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 8px 16px;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        button:hover, .button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        button.primary, .button.primary {
+            background-color: var(--primary-color);
+        }
+        
+        button.danger, .button.danger {
+            background-color: var(--danger-color);
+        }
+        
+        .card {
+            background-color: var(--card-bg-color);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            background-color: var(--card-bg-color);
+            color: var(--text-color);
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 4px;
+        }
+        
+        .tab-button {
+            background: transparent;
+            color: var(--text-color);
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            transition: var(--transition);
+        }
+        
+        .tab-button:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .tab-button.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .task-card {
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: var(--card-bg-color);
+        }
+        
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .task-title {
+            font-weight: 500;
+        }
+        
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        
+        .task-content {
+            margin-top: 0.5rem;
+        }
+        
+        .task-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .dependency-list {
+            margin-top: 0.5rem;
+            padding-left: 1.5rem;
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: white;
+            margin-right: 0.5rem;
+        }
+        
+        .badge-comptia { background-color: #0066B3; }
+        .badge-linux { background-color: #26A65B; }
+        .badge-git { background-color: #F14E32; }
+        .badge-python { background-color: #3776AB; }
+        .badge-review { background-color: #9C27B0; }
+        .badge-adhd { background-color: #00BCD4; }
+        
+        .subtask-list {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .subtask-item {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background-color: rgba(0, 0, 0, 0.03);
+            border-radius: var(--border-radius);
+        }
+        
+        .adhd-tip-item {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background-color: rgba(0, 188, 212, 0.1);
+            border-radius: var(--border-radius);
+            border-left: 3px solid #00BCD4;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+        
+        .modal-content {
+            background-color: var(--card-bg-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+        }
+        
+        .checkbox-group {
+            margin-top: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .json-preview {
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            overflow-x: auto;
+            font-family: monospace;
+            white-space: pre;
+            margin-top: 1rem;
+        }
+        
+        .dark-mode .json-preview {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .filter-label {
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        .resource-mapping-container {
+            margin-top: 1rem;
+        }
+        
+        .resource-mapping-item {
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: var(--card-bg-color);
+        }
+        
+        .resource-info {
+            margin-bottom: 0.5rem;
+        }
+        
+        .resource-url {
+            font-family: monospace;
+            word-break: break-all;
+            color: var(--accent-color);
+            font-size: 0.9rem;
+        }
+        
+        .resource-meta {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        
+        .resource-mapping {
+            background-color: rgba(0, 0, 0, 0.03);
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+        }
+        
+        .dark-mode .resource-mapping {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+        
+        .resource-mapping label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+        }
+        
+        .resource-mapping select {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg-color);
+            color: var(--text-color);
+        }
+        
+        .progress-container {
+            margin: 1rem 0;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent-color);
+            border-radius: 4px;
+            transition: width 0.4s ease-in-out;
+        }
+        
+        .status-message {
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border-radius: var(--border-radius);
+            background-color: rgba(76, 175, 80, 0.1);
+            border-left: 3px solid var(--success-color);
+        }
+        
+        @media (max-width: 768px) {
+            .header-top {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .filter-bar {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body x-data="adminApp()" :class="{ 'dark-mode': darkMode }" x-init="initialize()">
+    <header>
+        <div class="container">
+            <div class="header-brand">
+                <img src="studypathlogo.png" alt="Study Path Tracker" class="app-logo">
+                <!-- <h1 class="app-title">Study Path Tracker</h1> -->
+            </div>
+                <div class="header-actions">
+                    <button class="button" @click="darkMode = !darkMode">
+                        <i class="fas" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
+                        <span x-text="darkMode ? 'Light Mode' : 'Dark Mode'"></span>
+                    </button>
+                    <button class="button" @click="logout" x-show="user">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Login Section -->
+        <div class="card" x-show="!user">
+            <h2>Administrator Login</h2>
+            <form @submit.prevent="login">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" x-model="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" x-model="loginPassword" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="button primary">Login</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Admin Panel -->
+        <div x-show="user">
+            <div class="tab-nav">
+                <button class="tab-button" :class="{ active: activeTab === 'tasks' }" @click="activeTab = 'tasks'">
+                    <i class="fas fa-tasks"></i> Tasks
+                </button>
+                <button class="tab-button" :class="{ active: activeTab === 'import' }" @click="activeTab = 'import'">
+                    <i class="fas fa-file-import"></i> Import/Export
+                </button>
+                <button class="tab-button" :class="{ active: activeTab === 'programs' }" @click="activeTab = 'programs'">
+                    <i class="fas fa-graduation-cap"></i> Study programs
+                </button>
+            </div>
+
+            <!-- Tasks Tab -->
+            <div x-show="activeTab === 'tasks'">
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <span class="filter-label">Week:</span>
+                        <select x-model="weekFilter">
+                            <option value="all">All Weeks</option>
+                            <template x-for="week in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]" :key="week">
+                                <option :value="week" x-text="'Week ' + week"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label">Category:</span>
+                        <select x-model="categoryFilter">
+                            <option value="all">All Categories</option>
+                            <option value="comptia">CompTIA A+</option>
+                            <option value="linux">Linux</option>
+                            <option value="git">Git</option>
+                            <option value="python">Python</option>
+                            <option value="review">Review</option>
+                            <option value="adhd">ADHD Tips</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label">Search:</span>
+                        <input type="text" x-model="searchQuery" placeholder="Search tasks...">
+                    </div>
+                    <button class="button" @click="createTask">
+                        <i class="fas fa-plus"></i> Add New Task
+                    </button>
+                </div>
+
+                <template x-if="filteredTasks.length === 0">
+                    <div class="card">
+                        <p>No tasks found matching the current filters.</p>
+                    </div>
+                </template>
+
+                <template x-for="task in paginatedTasks" :key="task.id">
+                    <div class="task-card">
+                        <div class="task-header">
+                            <span class="task-title" x-text="task.title"></span>
+                            <span class="category-badge" :class="'badge-' + task.category" x-text="getCategoryName(task.category)"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="button primary" @click="createProgram">
+                            <i class="fas fa-save"></i> Create Program
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Existing Study Programs</h2>
+                    
+                    <template x-if="programs.length === 0">
+                        <p>No study programs created yet.</p>
+                    </template>
+                    
+                    <template x-for="program in programs" :key="program.id">
+                        <div class="task-card">
+                            <div class="task-header">
+                                <span class="task-title" x-text="program.title"></span>
+                                <span x-text="program.duration + ' weeks'"></span>
+                            </div>
+                            <div class="task-content" x-text="program.description"></div>
+                            
+                            <div class="task-content">
+                                <h4>Categories:</h4>
+                                <div class="checkbox-group">
+                                    <template x-for="category in program.categories" :key="category">
+                                        <span class="category-badge" :style="'background-color: ' + getCategoryColor(category)" x-text="getCategoryName(category)"></span>
+                                    </template>
+                                </div>
+                            </div>
+                            
+                            <div class="task-actions">
+                                <button class="button" @click="editProgram(program)">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="button" @click="duplicateProgram(program)">
+                                    <i class="fas fa-copy"></i> Duplicate
+                                </button>
+                                <button class="button danger" @click="deleteProgram(program)">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Task Edit Modal -->
+    <div class="modal" x-show="showTaskModal" x-transition>
+        <div class="modal-content" @click.outside="showTaskModal = false">
+            <span class="close-button" @click="showTaskModal = false">&times;</span>
+            <h2 x-text="editingTask.id ? 'Edit Task' : 'Create New Task'"></h2>
+            
+            <form @submit.prevent="saveTask">
+                <div class="form-group">
+                    <label for="task-id">Task ID (unique identifier):</label>
+                    <input type="text" id="task-id" x-model="editingTask.id" :disabled="editingTask.id !== ''">
+                    <small>Used for dependencies and progress tracking. Can't be changed after creation.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-title">Title:</label>
+                    <input type="text" id="task-title" x-model="editingTask.title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-description">Description:</label>
+                    <textarea id="task-description" x-model="editingTask.description" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-category">Category:</label>
+                    <select id="task-category" x-model="editingTask.category" required>
+                        <option value="comptia">CompTIA A+</option>
+                        <option value="linux">Linux</option>
+                        <option value="git">Git</option>
+                        <option value="python">Python</option>
+                        <option value="review">Review</option>
+                        <option value="adhd">ADHD Tips</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-minutes">Estimated Minutes:</label>
+                    <input type="number" id="task-minutes" x-model="editingTask.estimatedMinutes" min="5" max="240" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-priority">Week (Priority):</label>
+                    <select id="task-priority" x-model="editingTask.priority" required>
+                        <template x-for="week in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]" :key="week">
+                            <option :value="week" x-text="'Week ' + week"></option>
+                        </template>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Dependencies:</label>
+                    <div class="checkbox-group">
+                        <template x-for="task in dependencyOptions" :key="task.id">
+                            <label class="checkbox-item">
+                                <input type="checkbox" :value="task.id" x-model="editingTask.dependencies">
+                                <span x-text="task.title"></span>
+                            </label>
+                        </template>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Subtasks:</label>
+                    <template x-for="(subtask, index) in editingTask.subtasks" :key="index">
+                        <div style="margin-bottom: 1rem; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--border-radius);">
+                            <div class="form-group">
+                                <label>ID:</label>
+                                <input type="text" x-model="subtask.id">
+                            </div>
+                            <div class="form-group">
+                                <label>Title:</label>
+                                <input type="text" x-model="subtask.title">
+                            </div>
+                            <div class="form-group">
+                                <label>Category:</label>
+                                <select x-model="subtask.category">
+                                    <option value="comptia">CompTIA A+</option>
+                                    <option value="linux">Linux</option>
+                                    <option value="git">Git</option>
+                                    <option value="python">Python</option>
+                                    <option value="review">Review</option>
+                                    <option value="adhd">ADHD Tips</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Estimated Minutes:</label>
+                                <input type="number" x-model="subtask.estimatedMinutes" min="5" max="120">
+                            </div>
+                            <button type="button" class="button danger" @click="removeSubtask(index)">
+                                <i class="fas fa-trash"></i> Remove Subtask
+                            </button>
+                        </div>
+                    </template>
+                    
+                    <button type="button" class="button" @click="addSubtask">
+                        <i class="fas fa-plus"></i> Add Subtask
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <label>ADHD Tips:</label>
+                    <template x-for="(tip, index) in editingTask.adhd_tips" :key="index">
+                        <div style="margin-bottom: 1rem; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--border-radius);">
+                            <div class="form-group">
+                                <label>ID:</label>
+                                <input type="text" x-model="tip.id">
+                            </div>
+                            <div class="form-group">
+                                <label>Content:</label>
+                                <textarea x-model="tip.content" rows="3"></textarea>
+                            </div>
+                            <button type="button" class="button danger" @click="removeAdhdTip(index)">
+                                <i class="fas fa-trash"></i> Remove Tip
+                            </button>
+                        </div>
+                    </template>
+                    
+                    <button type="button" class="button" @click="addAdhdTip">
+                        <i class="fas fa-plus"></i> Add ADHD Tip
+                    </button>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="button" @click="showTaskModal = false">Cancel</button>
+                    <button type="submit" class="button primary">Save Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Program Edit Modal -->
+    <div class="modal" x-show="showProgramModal" x-transition>
+        <div class="modal-content" @click.outside="showProgramModal = false">
+            <span class="close-button" @click="showProgramModal = false">&times;</span>
+            <h2 x-text="editingProgram.id ? 'Edit Program' : 'Create New Program'"></h2>
+            
+            <form @submit.prevent="saveProgram">
+                <div class="form-group">
+                    <label for="program-edit-title">Program Title:</label>
+                    <input type="text" id="program-edit-title" x-model="editingProgram.title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="program-edit-description">Description:</label>
+                    <textarea id="program-edit-description" x-model="editingProgram.description" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="program-edit-duration">Duration (weeks):</label>
+                    <input type="number" id="program-edit-duration" x-model="editingProgram.duration" min="1" max="52" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Categories:</label>
+                    <div class="checkbox-group">
+                        <template x-for="category in availableCategories" :key="category.value">
+                            <label class="checkbox-item">
+                                <input type="checkbox" :value="category.value" x-model="editingProgram.categories">
+                                <span x-text="category.name"></span>
+                            </label>
+                        </template>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="button" @click="showProgramModal = false">Cancel</button>
+                    <button type="submit" class="button primary">Save Program</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Resource Extraction Results Modal -->
+    <div class="modal" x-show="showResourceExtractionModal" x-transition>
+        <div class="modal-content">
+            <span class="close-button" @click="showResourceExtractionModal = false">&times;</span>
+            <h2>Extracted Resources</h2>
+            
+            <p class="status-message" x-text="processingStatus"></p>
+            
+            <div class="resource-mapping-container">
+                <template x-for="(resource, index) in extractedResources" :key="index">
+                    <div class="resource-mapping-item">
+                        <div class="resource-info">
+                            <h4 x-text="resource.title"></h4>
+                            <p class="resource-url" x-text="resource.url"></p>
+                            <p class="resource-meta">Page <span x-text="resource.pageNumber"></span></p>
+                        </div>
+                        
+                        <div class="resource-mapping">
+                            <label>Map to task:</label>
+                            <select x-model="resource.mappedTaskId">
+                                <option value="">-- Select a task --</option>
+                                <template x-for="task in tasks" :key="task.id">
+                                    <option :value="task.id" x-text="task.title"></option>
+                                </template>
+                            </select>
+                            
+                            <label>Category:</label>
+                            <select x-model="resource.category">
+                                <template x-for="category in allCategories" :key="category">
+                                    <option :value="category" x-text="getCategoryName(category)"></option>
+                                </template>
+                            </select>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            
+            <div class="form-actions">
+                <button class="button" @click="showResourceExtractionModal = false">Cancel</button>
+                <button class="button primary" @click="saveExtractedResources">
+                    Save Resources
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase and App Scripts -->
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAEgePZakd08lXh2kM5-eZBxeL5sgPP0DU",
+            authDomain: "study-progress-tracker-4721a.firebaseapp.com",
+            projectId: "study-progress-tracker-4721a",
+            storageBucket: "study-progress-tracker-4721a.firebasestorage.app",
+            messagingSenderId: "824200901040",
+            appId: "1:824200901040:web:fd6e9ac2db353f0840e675",
+            measurementId: "G-RPSDNZTYVC"
+          };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        
+        // Define adminApp function before it's used in x-data binding
+        function adminApp() {
+            return {
+                // Authentication
+                user: null,
+                loginEmail: '',
+                loginPassword: '',
+                
+                // UI state
+                activeTab: 'tasks',
+                darkMode: localStorage.getItem('adminDarkMode') === 'true' || false,
+                showTaskModal: false,
+                showProgramModal: false,
+                showResourceExtractionModal: false,
+
+                // Data
+                tasks: [],
+                programs: [],
+                resources: [],
+                
+                // Filters
+                weekFilter: 'all',
+                categoryFilter: 'all',
+                searchQuery: '',
+                currentPage: 1,
+                itemsPerPage: 10,
+                
+                // Editing
+                editingTask: {
+                    id: '',
+                    title: '',
+                    description: '',
+                    category: 'comptia',
+                    estimatedMinutes: 30,
+                    dependencies: [],
+                    priority: 1,
+                    subtasks: [],
+                    adhd_tips: []
+                },
+                
+                // PDF extraction
+                selectedPdf: null,
+                pdfUploadProgress: 0,
+                extractedResources: [],
+                processingStatus: '',
+                
+                // Import/Export
+                importData: null,
+                exportOptions: {
+                    byWeek: true,
+                    prettyPrint: true,
+                    weeks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+                },
+                
+                // Programs
+                editingProgram: {
+                    id: '',
+                    title: '',
+                    description: '',
+                    duration: 12,
+                    categories: ['comptia', 'linux', 'git', 'python', 'review', 'adhd']
+                },
+                
+                newProgram: {
+                    title: '',
+                    description: '',
+                    duration: 12,
+                    categories: ['comptia', 'linux', 'git', 'python', 'review', 'adhd']
+                },
+                
+                newCategory: {
+                    name: '',
+                    value: '',
+                    color: '#6495ED'
+                },
+                
+                // Available categories
+                availableCategories: [
+                    { name: 'CompTIA A+', value: 'comptia', color: '#0066B3' },
+                    { name: 'Linux', value: 'linux', color: '#26A65B' },
+                    { name: 'Git', value: 'git', color: '#F14E32' },
+                    { name: 'Python', value: 'python', color: '#3776AB' },
+                    { name: 'Review', value: 'review', color: '#9C27B0' },
+                    { name: 'ADHD Tips', value: 'adhd', color: '#00BCD4' }
+                ],
+                
+                // Computed properties
+                get dependencyOptions() {
+                    return this.tasks.filter(task => 
+                        task.id !== this.editingTask.id && 
+                        task.priority <= this.editingTask.priority
+                    );
+                },
+                
+                get filteredTasks() {
+                    return this.tasks.filter(task => {
+                        // Filter by week
+                        if (this.weekFilter !== 'all' && task.priority !== parseInt(this.weekFilter)) {
+                            return false;
+                        }
+                        
+                        // Filter by category
+                        if (this.categoryFilter !== 'all' && task.category !== this.categoryFilter) {
+                            return false;
+                        }
+                        
+                        // Filter by search query
+                        if (this.searchQuery) {
+                            const query = this.searchQuery.toLowerCase();
+                            return task.title.toLowerCase().includes(query) || 
+                                   task.description.toLowerCase().includes(query);
+                        }
+                        
+                        return true;
+                    });
+                },
+                
+                get paginatedTasks() {
+                    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+                    return this.filteredTasks.slice(startIndex, startIndex + this.itemsPerPage);
+                },
+                
+                get totalPages() {
+                    return Math.ceil(this.filteredTasks.length / this.itemsPerPage);
+                },
+                
+                get allCategories() {
+                    return this.availableCategories.map(cat => cat.value);
+                },
+                
+                // Initialize the application
+                initialize() {
+                    console.log("Initializing admin app");
+                    
+                    // Set up auth state listener
+                    firebase.auth().onAuthStateChanged(user => {
+                        console.log("Auth state changed:", user ? user.email : "No user");
+                        this.user = user;
+                        if (user) {
+                            this.loadTasks();
+                            this.loadPrograms();
+                            this.loadResources();
+                        }
+                    });
+                    
+                    // Check if dark mode is enabled
+                    if (this.darkMode) {
+                        document.documentElement.classList.add('dark-mode');
+                    }
+                },
+                
+                // Login function
+                async login() {
+                    try {
+                        await firebase.auth().signInWithEmailAndPassword(this.loginEmail, this.loginPassword);
+                        // Clear login form
+                        this.loginEmail = '';
+                        this.loginPassword = '';
+                    } catch (error) {
+                        alert('Login failed: ' + error.message);
+                    }
+                },
+                
+                // Logout function
+                async logout() {
+                    try {
+                        await firebase.auth().signOut();
+                    } catch (error) {
+                        console.error('Logout failed:', error);
+                    }
+                },
+                
+                // Load tasks from Firestore
+                async loadTasks() {
+                    console.log("Loading tasks...");
+                    try {
+                        const tasksSnapshot = await firebase.firestore().collection('tasks').get();
+                        this.tasks = tasksSnapshot.docs.map(doc => ({ 
+                            id: doc.id,
+                            ...doc.data()
+                        }));
+                        
+                        console.log(`Loaded ${this.tasks.length} tasks`);
+                        
+                        // Sort by week and then by title
+                        this.tasks.sort((a, b) => {
+                            if (a.priority !== b.priority) {
+                                return a.priority - b.priority;
+                            }
+                            return a.title.localeCompare(b.title);
+                        });
+                    } catch (error) {
+                        console.error('Error loading tasks:', error);
+                        alert('Failed to load tasks: ' + error.message);
+                    }
+                },
+                
+                // Load programs from Firestore
+                async loadPrograms() {
+                    try {
+                        const programsSnapshot = await firebase.firestore().collection('programs').get();
+                        this.programs = programsSnapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data()
+                        }));
+                        console.log(`Loaded ${this.programs.length} programs`);
+                    } catch (error) {
+                        console.error('Error loading programs:', error);
+                        alert('Failed to load programs: ' + error.message);
+                    }
+                },
+                
+                // Load resources from Firestore
+                async loadResources() {
+                    try {
+                        const resourcesSnapshot = await firebase.firestore().collection('resources').get();
+                        this.resources = resourcesSnapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data()
+                        }));
+                        console.log(`Loaded ${this.resources.length} resources`);
+                    } catch (error) {
+                        console.error('Error loading resources:', error);
+                    }
+                },
+                
+                // Category functions
+                addCustomCategory() {
+                    if (!this.newCategory.name || !this.newCategory.value) {
+                        alert('Please provide both name and value for the custom category.');
+                        return;
+                    }
+                    
+                    // Check if value already exists
+                    if (this.availableCategories.some(c => c.value === this.newCategory.value)) {
+                        alert('A category with this value already exists.');
+                        return;
+                    }
+                    
+                    // Add to available categories
+                    this.availableCategories.push({
+                        name: this.newCategory.name,
+                        value: this.newCategory.value,
+                        color: this.newCategory.color
+                    });
+                    
+                    // Reset form
+                    this.newCategory = {
+                        name: '',
+                        value: '',
+                        color: '#6495ED'
+                    };
+                },
+                
+                // Helper functions
+                getTaskTitle(taskId) {
+                    const task = this.tasks.find(t => t.id === taskId);
+                    return task ? task.title : 'Unknown Task';
+                },
+                
+                getCategoryName(categoryValue) {
+                    const category = this.availableCategories.find(c => c.value === categoryValue);
+                    return category ? category.name : categoryValue;
+                },
+                
+                getCategoryColor(categoryValue) {
+                    const category = this.availableCategories.find(c => c.value === categoryValue);
+                    return category ? category.color : '#808080';
+                },
+                
+                // Pagination functions
+                prevPage() {
+                    if (this.currentPage > 1) {
+                        this.currentPage--;
+                    }
+                },
+                
+                nextPage() {
+                    if (this.currentPage < this.totalPages) {
+                        this.currentPage++;
+                    }
+                },
+                
+                // Task management functions
+                createTask() {
+                    this.editingTask = {
+                        id: '',
+                        title: '',
+                        description: '',
+                        category: 'comptia',
+                        estimatedMinutes: 30,
+                        dependencies: [],
+                        priority: 1,
+                        subtasks: [],
+                        adhd_tips: []
+                    };
+                    this.showTaskModal = true;
+                },
+                
+                editTask(task) {
+                    // Create a deep copy to avoid modifying the original
+                    this.editingTask = JSON.parse(JSON.stringify(task));
+                    this.showTaskModal = true;
+                },
+                
+                async saveTask() {
+                    try {
+                        const isNewTask = !this.editingTask.id;
+                        const db = firebase.firestore();
+                        
+                        // Add timestamps
+                        this.editingTask.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+                        if (isNewTask) {
+                            this.editingTask.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                        }
+                        
+                        // Generate ID for new tasks if not provided
+                        if (isNewTask && !this.editingTask.id) {
+                            this.editingTask.id = Date.now().toString(36) + Math.random().toString(36).substr(2);
+                        }
+                        
+                        // Save to Firestore
+                        await db.collection('tasks').doc(this.editingTask.id).set(this.editingTask);
+                        
+                        // Update local task list
+                        if (isNewTask) {
+                            this.tasks.push(this.editingTask);
+                        } else {
+                            const index = this.tasks.findIndex(t => t.id === this.editingTask.id);
+                            if (index > -1) {
+                                this.tasks[index] = this.editingTask;
+                            }
+                        }
+                        
+                        // Sort the tasks
+                        this.tasks.sort((a, b) => {
+                            if (a.priority !== b.priority) {
+                                return a.priority - b.priority;
+                            }
+                            return a.title.localeCompare(b.title);
+                        });
+                        
+                        // Close modal
+                        this.showTaskModal = false;
+                        
+                        alert('Task saved successfully!');
+                    } catch (error) {
+                        console.error('Error saving task:', error);
+                        alert('Failed to save task: ' + error.message);
+                    }
+                },
+                
+                async deleteTask(task) {
+                    if (!confirm(`Are you sure you want to delete the task "${task.title}"?`)) {
+                        return;
+                    }
+                    
+                    try {
+                        // Delete from Firestore
+                        await firebase.firestore().collection('tasks').doc(task.id).delete();
+                        
+                        // Remove from local tasks array
+                        this.tasks = this.tasks.filter(t => t.id !== task.id);
+                        
+                        alert('Task deleted successfully!');
+                    } catch (error) {
+                        console.error('Error deleting task:', error);
+                        alert('Failed to delete task: ' + error.message);
+                    }
+                },
+                
+                // Subtask management
+                addSubtask() {
+                    const newSubtask = {
+                        id: 'subtask-' + Date.now().toString(36),
+                        title: '',
+                        category: this.editingTask.category,
+                        estimatedMinutes: 15,
+                        completed: false
+                    };
+                    
+                    this.editingTask.subtasks.push(newSubtask);
+                },
+                
+                removeSubtask(index) {
+                    this.editingTask.subtasks.splice(index, 1);
+                },
+                
+                // ADHD tip management
+                addAdhdTip() {
+                    const newTip = {
+                        id: 'adhd-' + Date.now().toString(36),
+                        content: ''
+                    };
+                    
+                    this.editingTask.adhd_tips.push(newTip);
+                },
+                
+                removeAdhdTip(index) {
+                    this.editingTask.adhd_tips.splice(index, 1);
+                },
+                
+                // Program management
+                createProgram() {
+                    this.newProgram.id = Date.now().toString(36);
+                    const db = firebase.firestore();
+                    
+                    db.collection('programs').doc(this.newProgram.id).set({
+                        ...this.newProgram,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    })
+                    .then(() => {
+                        alert('Program created successfully!');
+                        this.programs.push({...this.newProgram});
+                        
+                        // Reset form
+                        this.newProgram = {
+                            title: '',
+                            description: '',
+                            duration: 12,
+                            categories: ['comptia', 'linux', 'git', 'python', 'review', 'adhd']
+                        };
+                    })
+                    .catch(error => {
+                        console.error('Error creating program:', error);
+                        alert('Failed to create program: ' + error.message);
+                    });
+                },
+                
+                editProgram(program) {
+                    this.editingProgram = JSON.parse(JSON.stringify(program));
+                    this.showProgramModal = true;
+                },
+                
+                async saveProgram() {
+                    try {
+                        // Update timestamp
+                        this.editingProgram.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+                        
+                        // Save to Firestore
+                        await firebase.firestore().collection('programs').doc(this.editingProgram.id).set(this.editingProgram);
+                        
+                        // Update local program list
+                        const index = this.programs.findIndex(p => p.id === this.editingProgram.id);
+                        if (index > -1) {
+                            this.programs[index] = this.editingProgram;
+                        }
+                        
+                        // Close modal
+                        this.showProgramModal = false;
+                        
+                        alert('Program saved successfully!');
+                    } catch (error) {
+                        console.error('Error saving program:', error);
+                        alert('Failed to save program: ' + error.message);
+                    }
+                },
+                
+                async deleteProgram(program) {
+                    if (!confirm(`Are you sure you want to delete the program "${program.title}"?`)) {
+                        return;
+                    }
+                    
+                    try {
+                        // Delete from Firestore
+                        await firebase.firestore().collection('programs').doc(program.id).delete();
+                        
+                        // Remove from local programs array
+                        this.programs = this.programs.filter(p => p.id !== program.id);
+                        
+                        alert('Program deleted successfully!');
+                    } catch (error) {
+                        console.error('Error deleting program:', error);
+                        alert('Failed to delete program: ' + error.message);
+                    }
+                },
+                
+                duplicateProgram(program) {
+                    const newProgram = JSON.parse(JSON.stringify(program));
+                    newProgram.id = Date.now().toString(36);
+                    newProgram.title = `Copy of ${newProgram.title}`;
+                    
+                    firebase.firestore().collection('programs').doc(newProgram.id).set({
+                        ...newProgram,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    })
+                    .then(() => {
+                        this.programs.push(newProgram);
+                        alert('Program duplicated successfully!');
+                    })
+                    .catch(error => {
+                        console.error('Error duplicating program:', error);
+                        alert('Failed to duplicate program: ' + error.message);
+                    });
+                },
+                
+                // Import/Export functions
+                handleFileSelect(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const jsonData = JSON.parse(e.target.result);
+                            this.importData = jsonData;
+                            console.log('File loaded successfully:', this.importData);
+                        } catch (error) {
+                            console.error('Error parsing JSON file:', error);
+                            alert('Error: The selected file is not a valid JSON file.');
+                            this.importData = null;
+                        }
+                    };
+                    
+                    reader.onerror = (e) => {
+                        console.error('Error reading file:', e);
+                        alert('Error reading the file. Please try again.');
+                        this.importData = null;
+                    };
+                    
+                    reader.readAsText(file);
+                },
+                
+                // Count tasks in import data
+                countImportTasks() {
+                    if (!this.importData) return 0;
+                    
+                    // If data is grouped by week
+                    if (this.importData.week1 || this.importData.week2) {
+                        let count = 0;
+                        for (let i = 1; i <= 12; i++) {
+                            const weekKey = `week${i}`;
+                            if (this.importData[weekKey] && Array.isArray(this.importData[weekKey])) {
+                                count += this.importData[weekKey].length;
+                            }
+                        }
+                        return count;
+                    } 
+                    // If data is a simple array
+                    else if (Array.isArray(this.importData)) {
+                        return this.importData.length;
+                    }
+                    
+                    return 0;
+                },
+                
+                // Cancel import
+                cancelImport() {
+                    this.importData = null;
+                    document.getElementById('import-file').value = '';
+                },
+                
+                // Export tasks
+                exportTasks() {
+                    try {
+                        // Filter tasks by selected weeks
+                        const filteredTasks = this.tasks.filter(task => 
+                            this.exportOptions.weeks.includes(task.priority)
+                        );
+                        
+                        let exportData;
+                        
+                        // Group by week if option is selected
+                        if (this.exportOptions.byWeek) {
+                            exportData = {};
+                            this.exportOptions.weeks.forEach(week => {
+                                const weekTasks = filteredTasks.filter(task => task.priority === week);
+                                if (weekTasks.length > 0) {
+                                    exportData[`week${week}`] = weekTasks;
+                                }
+                            });
+                        } else {
+                            exportData = filteredTasks;
+                        }
+                        
+                        // Create JSON string
+                        const jsonStr = this.exportOptions.prettyPrint 
+                            ? JSON.stringify(exportData, null, 2) 
+                            : JSON.stringify(exportData);
+                        
+                        // Create download link
+                        const blob = new Blob([jsonStr], { type: 'application/json' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'tasks-export.json';
+                        document.body.appendChild(a);
+                        a.click();
+                        
+                        // Clean up
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    } catch (error) {
+                        console.error('Error exporting tasks:', error);
+                        alert('Failed to export tasks: ' + error.message);
+                    }
+                },
+                
+                // Import tasks
+                async importTasks() {
+                    if (!this.importData) {
+                        alert('Please select a file to import.');
+                        return;
+                    }
+                    
+                    // Check authentication status
+                    if (!firebase.auth().currentUser) {
+                        console.error("Authentication error: No current user");
+                        alert('You must be logged in to import tasks. Please sign in again.');
+                        return;
+                    }
+                    
+                    console.log("Starting import process with user:", firebase.auth().currentUser.email);
+                    
+                    try {
+                        // Process tasks for import
+                        let tasksToImport = [];
+                        
+                        // If data is grouped by week
+                        if (this.importData.week1 || this.importData.week2) {
+                            console.log("Detected week-based task structure");
+                            for (let i = 1; i <= 12; i++) {
+                                const weekKey = `week${i}`;
+                                if (this.importData[weekKey] && Array.isArray(this.importData[weekKey])) {
+                                    console.log(`Found ${this.importData[weekKey].length} tasks in ${weekKey}`);
+                                    tasksToImport = [...tasksToImport, ...this.importData[weekKey]];
+                                }
+                            }
+                        } 
+                        // If data is a simple array
+                        else if (Array.isArray(this.importData)) {
+                            console.log("Detected array-based task structure");
+                            tasksToImport = this.importData;
+                        }
+                        
+                        console.log(`Total tasks to import: ${tasksToImport.length}`);
+                        
+                        if (tasksToImport.length === 0) {
+                            alert('No tasks found in the file.');
+                            return;
+                        }
+                        
+                        // Confirm import
+                        if (!confirm(`Are you sure you want to import ${tasksToImport.length} tasks?`)) {
+                            return;
+                        }
+                        
+                        // First, try a simple operation to verify permissions
+                        try {
+                            console.log("Testing Firestore access...");
+                            const testDocRef = firebase.firestore().collection('tasks').doc('test-access-' + Date.now());
+                            await testDocRef.set({ 
+                                title: 'Test Access',
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                            console.log("Access test successful");
+                            await testDocRef.delete();
+                            console.log("Test document deleted");
+                        } catch (accessError) {
+                            console.error("Firestore access test failed:", accessError);
+                            alert(`Permission error: Could not access Firestore.\n${accessError.message}\n\nPlease check your security rules and authentication.`);
+                            return;
+                        }
+                        
+                        // Batch write to Firestore with smaller batches
+                        const db = firebase.firestore();
+                        console.log("Starting batch operations...");
+                        
+                        // Use smaller batches (max 100) to avoid issues
+                        const batchSize = 100;
+                        let totalImported = 0;
+                        
+                        for (let i = 0; i < tasksToImport.length; i += batchSize) {
+                            try {
+                                const batch = db.batch();
+                                const currentBatch = tasksToImport.slice(i, Math.min(i + batchSize, tasksToImport.length));
+                                
+                                console.log(`Processing batch ${Math.floor(i/batchSize) + 1} (${currentBatch.length} tasks)`);
+                                
+                                // Process current batch
+                                for (const task of currentBatch) {
+                                    if (!task.id) {
+                                        console.warn('Skipping task without ID:', task);
+                                        continue;
+                                    }
+                                    
+                                    const docRef = db.collection('tasks').doc(task.id);
+                                    
+                                    // Add timestamps if not present
+                                    const taskToSave = {...task};
+                                    if (!taskToSave.createdAt) {
+                                        taskToSave.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                                    }
+                                    taskToSave.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+                                    
+                                    batch.set(docRef, taskToSave);
+                                }
+                                
+                                // Commit current batch
+                                console.log(`Committing batch ${Math.floor(i/batchSize) + 1}...`);
+                                await batch.commit();
+                                console.log(`Batch ${Math.floor(i/batchSize) + 1} committed successfully`);
+                                totalImported += currentBatch.length;
+                                
+                            } catch (batchError) {
+                                console.error(`Error in batch ${Math.floor(i/batchSize) + 1}:`, batchError);
+                                alert(`Error importing tasks (batch ${Math.floor(i/batchSize) + 1}): ${batchError.message}`);
+                                
+                                // Continue with next batch instead of stopping completely
+                                continue;
+                            }
+                        }
+                        
+                        if (totalImported > 0) {
+                            alert(`Successfully imported ${totalImported} tasks!`);
+                            
+                            // Reset file input and importData
+                            document.getElementById('import-file').value = '';
+                            this.importData = null;
+                            
+                            // Reload tasks
+                            await this.loadTasks();
+                        } else {
+                            alert('No tasks were imported. Please check console for errors.');
+                        }
+                        
+                    } catch (error) {
+                        console.error('Error in import process:', error);
+                        alert(`Import failed: ${error.message}\nCheck browser console for details.`);
+                    }
+                },
+                
+                // Test import function
+                async testImport() {
+                    try {
+                        console.log("Testing Firestore access...");
+                        const testDocRef = firebase.firestore().collection('tasks').doc('test-access-' + Date.now());
+                        await testDocRef.set({ 
+                            title: 'Test Access',
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        console.log("Access test successful");
+                        await testDocRef.delete();
+                        console.log("Test document deleted");
+                        alert("Firestore access test successful!");
+                    } catch (error) {
+                        console.error("Firestore access test failed:", error);
+                        alert(`Permission error: Could not access Firestore.\n${error.message}`);
+                    }
+                },
+                
+                // PDF handling functions
+                handlePdfSelect(event) {
+                    const file = event.target.files[0];
+                    if (file && file.type === 'application/pdf') {
+                        this.selectedPdf = file;
+                    } else {
+                        alert('Please select a valid PDF file.');
+                        event.target.value = '';
+                        this.selectedPdf = null;
+                    }
+                },
+                
+                // Process the PDF to extract resources
+                async processPdf() {
+                    if (!this.selectedPdf) return;
+                    
+                    this.processingStatus = 'Uploading PDF...';
+                    
+                    try {
+                        // 1. Upload the PDF to temporary storage
+                        const pdfUrl = await this.uploadPdf(this.selectedPdf);
+                        
+                        // 2. Process the PDF to extract links
+                        this.processingStatus = 'Extracting resources...';
+                        this.extractedResources = await this.extractResourcesFromPdf(pdfUrl);
+                        
+                        // 3. Show the extracted resources for review
+                        this.processingStatus = `Extracted ${this.extractedResources.length} resources.`;
+                        this.showResourceExtractionModal = true;
+                        
+                    } catch (error) {
+                        console.error('Error processing PDF:', error);
+                        this.processingStatus = 'Error processing PDF. Please try again.';
+                    }
+                },
+                
+                // Upload PDF to Firebase Storage
+                async uploadPdf(file) {
+                    return new Promise((resolve, reject) => {
+                        // Create a storage reference
+                        const storageRef = firebase.storage().ref();
+                        const fileRef = storageRef.child(`temp/${Date.now()}_${file.name}`);
+                        
+                        // Upload the file
+                        const uploadTask = fileRef.put(file);
+                        
+                        // Monitor upload progress
+                        uploadTask.on('state_changed', 
+                            (snapshot) => {
+                                // Track upload progress
+                                const progress = Math.round(
+                                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                                );
+                                this.pdfUploadProgress = progress;
+                            },
+                            (error) => {
+                                // Handle errors
+                                reject(error);
+                            },
+                            async () => {
+                                // Upload completed successfully
+                                const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
+                                resolve(downloadUrl);
+                            }
+                        );
+                    });
+                },
+                
+                // Extract resources from the PDF
+                async extractResourcesFromPdf(pdfUrl) {
+                    const pdfjsLib = window.pdfjsLib;
+                    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+                    
+                    // Load the document
+                    const loadingTask = pdfjsLib.getDocument(pdfUrl);
+                    const pdf = await loadingTask.promise;
+                    
+                    const resources = [];
+                    
+                    // Process each page
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        this.processingStatus = `Processing page ${i} of ${pdf.numPages}...`;
+                        
+                        const page = await pdf.getPage(i);
+                        
+                        // Get annotations (includes links)
+                        const annotations = await page.getAnnotations();
+                        const links = annotations.filter(a => a.subtype === 'Link' && a.url);
+                        
+                        // Get page text for context
+                        const textContent = await page.getTextContent();
+                        const pageText = textContent.items.map(item => item.str).join(' ');
+                        
+                        // Process each link
+                        for (const link of links) {
+                            // Try to find relevant text near the link
+                            const relevantText = this.findContextForLink(textContent.items, link.rect);
+                            
+                            resources.push({
+                                url: link.url,
+                                title: relevantText || this.generateTitleFromUrl(link.url),
+                                pageNumber: i,
+                                category: this.detectCategory(link.url, pageText, relevantText),
+                                description: `Resource extracted from PDF, page ${i}`
+                            });
+                        }
+                    }
+                    return resources;
+                },
+                
+                // Find text context near a link's position
+                findContextForLink(textItems, linkRect) {
+                    // This is a simplified approach - would need refinement in production
+                    const nearbyItems = textItems.filter(item => {
+                        // Check if text item is near the link rectangle
+                        const [, , , , itemX, itemY] = item.transform;
+                        
+                        return (
+                            itemY >= linkRect[1] - 20 && 
+                            itemY <= linkRect[3] + 20 &&
+                            itemX >= linkRect[0] - 100 && 
+                            itemX <= linkRect[2] + 100
+                        );
+                    });
+                    
+                    if (nearbyItems.length === 0) return null;
+                    
+                    // Join nearby text items
+                    const context = nearbyItems.map(item => item.str).join(' ').trim();
+                    
+                    // Remove extra whitespace, limit length
+                    return context.replace(/\s+/g, ' ').substring(0, 200);
+                },
+                
+                // Generate a title from URL if no context found
+                generateTitleFromUrl(url) {
+                    try {
+                        const urlObj = new URL(url);
+                        const path = urlObj.pathname;
+                        
+                        // Remove file extensions, slashes, dashes, etc.
+                        const cleanPath = path.split('/')
+                            .pop()
+                            .replace(/\.[^/.]+$/, '') // Remove file extension
+                            .replace(/-/g, ' ');
+                        
+                        // Capitalize words
+                        return cleanPath.split(' ')
+                            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                            .join(' ');
+                    } catch (e) {
+                        return "Resource " + Math.floor(Math.random() * 10000);
+                    }
+                },
+                
+                // Attempt to detect the resource category
+                detectCategory(url, pageText, context) {
+                    const combinedText = (context || '') + ' ' + url.toLowerCase();
+                    
+                    const categoryPatterns = {
+                        'comptia': ['comptia', 'a+', 'exam', 'certification', 'hardware', 'professor messer'],
+                        'linux': ['linux', 'ubuntu', 'command line', 'terminal', 'bash'],
+                        'git': ['git', 'github', 'version control', 'repository'],
+                        'python': ['python', 'programming', 'script'],
+                        'adhd': ['adhd', 'focus', 'attention', 'productivity']
+                    };
+                    
+                    // Check if any category keywords appear in the text
+                    for (const [category, keywords] of Object.entries(categoryPatterns)) {
+                        if (keywords.some(keyword => combinedText.includes(keyword))) {
+                            return category;
+                        }
+                    }
+                    
+                    // Default category if no match found
+                    return 'comptia';
+                },
+                
+                // Save extracted resources
+                async saveExtractedResources() {
+                    try {
+                        this.processingStatus = 'Saving resources...';
+                        
+                        // Create batch for Firestore operations
+                        const db = firebase.firestore();
+                        let batch = db.batch();
+                        let batchCount = 0;
+                        
+                        // Process each resource
+                        for (const resource of this.extractedResources) {
+                            // Add to resources collection
+                            const resourceId = 'res-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+                            const resourceRef = db.collection('resources').doc(resourceId);
+                            
+                            batch.set(resourceRef, {
+                                id: resourceId,
+                                title: resource.title,
+                                description: resource.description,
+                                url: resource.url,
+                                category: resource.category,
+                                type: 'extracted',
+                                source: 'pdf',
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                            
+                            // If mapped to a task, update the task
+                            if (resource.mappedTaskId) {
+                                const taskRef = db.collection('tasks').doc(resource.mappedTaskId);
+                                
+                                batch.update(taskRef, {
+                                    resourceUrl: resource.url,
+                                    resourceTitle: resource.title,
+                                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                            }
+                            
+                            batchCount += 2;
+                            
+                            // Commit batch if getting large
+                            if (batchCount > 400) {
+                                await batch.commit();
+                                batch = db.batch();
+                                batchCount = 0;
+                            }
+                        }
+                        
+                        // Commit any remaining operations
+                        if (batchCount > 0) {
+                            await batch.commit();
+                        }
+                        
+                        this.processingStatus = `Saved ${this.extractedResources.length} resources successfully!`;
+                        
+                        // Refresh resources
+                        this.loadResources();
+                        this.loadTasks();
+                        
+                        // Close modal after a delay
+                        setTimeout(() => {
+                            this.showResourceExtractionModal = false;
+                            this.extractedResources = [];
+                        }, 2000);
+                        
+                    } catch (error) {
+                        console.error('Error saving resources:', error);
+                        this.processingStatus = 'Error saving resources: ' + error.message;
+                    }
+                }
+            };
+        }
+    </script>
+</body>
+</html>
+                        <div class="task-meta">
+                            <span>Week <span x-text="task.priority"></span></span>
+                            <span><span x-text="task.estimatedMinutes"></span> minutes</span>
+                        </div>
+                        <div class="task-content" x-text="task.description"></div>
+                        
+                        <template x-if="task.dependencies && task.dependencies.length > 0">
+                            <div>
+                                <h4>Dependencies:</h4>
+                                <ul class="dependency-list">
+                                    <template x-for="depId in task.dependencies" :key="depId">
+                                        <li x-text="getTaskTitle(depId)"></li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </template>
+                        
+                        <template x-if="task.subtasks && task.subtasks.length > 0">
+                            <div>
+                                <h4>Subtasks:</h4>
+                                <ul class="subtask-list">
+                                    <template x-for="subtask in task.subtasks" :key="subtask.id">
+                                        <li class="subtask-item">
+                                            <div x-text="subtask.title"></div>
+                                            <div>
+                                                <span class="category-badge" :class="'badge-' + subtask.category" x-text="getCategoryName(subtask.category)"></span>
+                                                <span x-text="subtask.estimatedMinutes + ' minutes'"></span>
+                                            </div>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </template>
+                        
+                        <template x-if="task.adhd_tips && task.adhd_tips.length > 0">
+                            <div>
+                                <h4>ADHD Tips:</h4>
+                                <ul class="subtask-list">
+                                    <template x-for="tip in task.adhd_tips" :key="tip.id">
+                                        <li class="adhd-tip-item" x-text="tip.content"></li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </template>
+                        
+                        <div class="task-actions">
+                            <button class="button" @click="editTask(task)">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="button danger" @click="deleteTask(task)">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                </template>
+                
+                <div class="pagination" x-show="totalPages > 1">
+                    <button class="button" @click="prevPage" :disabled="currentPage === 1">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                    <span>Page <span x-text="currentPage"></span> of <span x-text="totalPages"></span></span>
+                    <button class="button" @click="nextPage" :disabled="currentPage === totalPages">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Import/Export tab -->
+            <div x-show="activeTab === 'import'">
+                <div class="card">
+                    <h2>Import Tasks</h2>
+                    <p>Import tasks from JSON file. Existing tasks with the same ID will be updated.</p>
+                    
+                    <!-- Authentication status display -->
+                    <div class="auth-status" x-show="user" style="margin-bottom: 15px; padding: 10px; background-color: rgba(76, 175, 80, 0.1); border-radius: 5px; border-left: 3px solid #4CAF50;">
+                        <p>Logged in as: <strong x-text="user.email"></strong></p>
+                    </div>
+                    
+                    <div class="auth-status" x-show="!user" style="margin-bottom: 15px; padding: 10px; background-color: rgba(244, 67, 54, 0.1); border-radius: 5px; border-left: 3px solid #F44336;">
+                        <p>Not logged in. Please sign in to import tasks.</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="import-file">Select JSON file:</label>
+                        <input type="file" id="import-file" accept=".json" @change="handleFileSelect">
+                    </div>
+                    
+                    <!-- Import buttons -->
+                    <div class="form-actions" style="margin-top: 15px;">
+                        <button class="button primary" @click="importTasks" :disabled="!importData">
+                            <i class="fas fa-file-import"></i> Import Tasks
+                        </button>
+                        
+                        <button class="button" @click="testImport" title="Test if you can write to Firestore">
+                            <i class="fas fa-vial"></i> Test Import (Single Task)
+                        </button>
+                    </div>
+                    
+                    <template x-if="importData">
+                        <div>
+                            <h3>Preview</h3>
+                            <p>Tasks to import: <strong x-text="countImportTasks()"></strong></p>
+                            
+                            <div class="json-preview" x-text="JSON.stringify(importData, null, 2).slice(0, 300) + '...'"></div>
+                            
+                            <div style="margin-top: 15px;">
+                                <button class="button" @click="cancelImport">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                
+                <div class="card">
+                    <h2>Export Tasks</h2>
+                    <p>Export tasks to JSON file for backup or sharing.</p>
+                    
+                    <div class="form-group">
+                        <label>Export options:</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" x-model="exportOptions.byWeek">
+                                <span>Group by week</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" x-model="exportOptions.prettyPrint">
+                                <span>Pretty print JSON</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Week range:</label>
+                        <div class="checkbox-group">
+                            <template x-for="week in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]" :key="week">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" :value="week" x-model="exportOptions.weeks">
+                                    <span x-text="'Week ' + week"></span>
+                                </label>
+                            </template>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="button primary" @click="exportTasks">
+                            <i class="fas fa-file-export"></i> Export Tasks
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>PDF Resource Extraction</h2>
+                    <p>Upload a PDF to extract resources and automatically map them to tasks.</p>
+                    
+                    <div class="form-group">
+                        <label for="pdf-upload">Select PDF file:</label>
+                        <input type="file" id="pdf-upload" accept=".pdf" @change="handlePdfSelect">
+                    </div>
+                    
+                    <div class="progress-container" x-show="pdfUploadProgress > 0">
+                        <div class="progress-label">
+                            <span>Upload Progress</span>
+                            <span x-text="pdfUploadProgress + '%'"></span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" :style="`width: ${pdfUploadProgress}%`"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="button primary" @click="processPdf" :disabled="!selectedPdf">
+                            <i class="fas fa-file-import"></i> Process PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Study programs Tab -->
+            <div x-show="activeTab === 'programs'">
+                <div class="card">
+                    <h2>Create New Study Program</h2>
+                    <p>Create a new study program template that can be used by students.</p>
+                    
+                    <div class="form-group">
+                        <label for="program-title">Program Title:</label>
+                        <input type="text" id="program-title" x-model="newProgram.title" placeholder="e.g., CompTIA Network+ Certification">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="program-description">Description:</label>
+                        <textarea id="program-description" x-model="newProgram.description" rows="3" placeholder="Brief description of the study program"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="program-duration">Duration (weeks):</label>
+                        <input type="number" id="program-duration" x-model="newProgram.duration" min="1" max="52">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Categories:</label>
+                        <div class="checkbox-group">
+                            <template x-for="category in availableCategories" :key="category.value">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" :value="category.value" x-model="newProgram.categories">
+                                    <span x-text="category.name"></span>
+                                </label>
+                            </template>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Custom Category:</label>
+                        <div class="filter-group">
+                            <input type="text" x-model="newCategory.name" placeholder="Category Name">
+                            <input type="text" x-model="newCategory.value" placeholder="Value (lowercase, no spaces)">
+                            <input type="color" x-model="newCategory.color">
+                            <button class="button" @click="addCustomCategory">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                        </div>
