@@ -1,6 +1,9 @@
 # Firebase configuration
 firebase-config.js
 
+# admin interface (temporary exclusion)
+public/admin-interface.html
+
 # Environment variables
 .env
 .env.local
