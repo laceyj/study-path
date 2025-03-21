@@ -1535,3 +1535,200 @@ a:hover {
   padding-bottom: 5px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* attempt to make a cleaner iOS header */
+/* ===== COMBINED HEADER OPTIMIZATION ===== */
+
+/* Variables */
+:root {
+  --header-transition: all 0.3s ease;
+  --mini-header-height: 44px;
+}
+
+/* Main header */
+.app-header {
+  transition: var(--header-transition);
+  max-height: 200px;
+  overflow: hidden;
+}
+
+/* Collapsed state */
+.app-header.collapsed {
+  max-height: var(--mini-header-height);
+}
+
+.app-header.collapsed .header-container {
+  display: none;
+}
+
+.app-header.collapsed .mini-header {
+  display: block;
+}
+
+/* Mini header styling */
+.mini-header {
+  display: none;
+  height: var(--mini-header-height);
+}
+
+.mini-header-content {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 10px;
+}
+
+.mini-logo {
+  font-weight: bold;
+  color: #7ed956;
+  font-size: 18px;
+}
+
+.mini-progress {
+  flex: 1;
+  margin: 0 12px;
+}
+
+.mini-progress-bar {
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.mini-progress-fill {
+  height: 100%;
+  background-color: var(--accent-color);
+  border-radius: 2px;
+}
+
+.expand-button {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.expand-button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Compact header styling */
+.compact-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-top: 8px;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-logo-small {
+  height: 32px;
+  width: auto;
+}
+
+/* Progress bar styling */
+.progress-container.slim {
+  margin-bottom: 8px;
+}
+
+.progress-container.slim .progress-label {
+  font-size: 12px;
+}
+
+.progress-container.slim .progress-bar {
+  height: 8px;
+}
+
+/* Collapsible categories */
+.collapsible-section {
+  margin-bottom: 8px;
+}
+
+.toggle-categories {
+  width: 100%;
+  text-align: center;
+  padding: 6px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.toggle-categories:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Condensed category styling */
+.category-legend {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.legend-item {
+  font-size: 0.8rem;
+  padding: 6px;
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 0;
+  }
+  
+  .compact-header {
+    padding-top: 4px;
+  }
+  
+  .progress-container.slim {
+    margin-bottom: 4px;
+  }
+  
+  /* Default to collapsed categories on mobile */
+  .toggle-categories {
+    margin-bottom: 0;
+  }
+}
+
+/* Tablet and larger screens */
+@media (min-width: 769px) {
+  .app-header {
+    max-height: none !important; /* Don't collapse on desktop */
+  }
+  
+  .mini-header {
+    display: none !important;
+  }
+  
+  .header-container {
+    display: block !important;
+  }
+  
+  /* Show categories by default on desktop */
+  .category-legend {
+    display: flex !important;
+    flex-wrap: wrap;
+  }
+  
+  .toggle-categories {
+    display: none;
+  }
+}

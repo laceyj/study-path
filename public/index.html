@@ -166,17 +166,121 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Header -->
+        <!-- testing new header for iOS improvements-->
+        <header class="app-header" :class="{ 'collapsed': scrollPosition > 50 && !headerExpanded }">
+            <div class="container">
+              <!-- Mini header (shows when collapsed) -->
+              <div class="mini-header">
+                <div class="mini-header-content">
+                  <span class="mini-logo">SP</span>
+                  <div class="mini-progress">
+                    <div class="mini-progress-bar">
+                      <div class="mini-progress-fill" :style="`width: ${overallProgress}%`"></div>
+                    </div>
+                  </div>
+                  <button @click="headerExpanded = true" class="expand-button">
+                    <i class="fas fa-chevron-down"></i>
+                  </button>
+                </div>
+              </div>
+          
+              <!-- Full header (condensed version) -->
+              <div class="header-container">
+                <div class="compact-header">
+                  <!-- Logo and sync in one row -->
+                  <div class="logo-container">
+                    <img src="studypathlogo.png" alt="Study Path" class="app-logo-small">
+                    <div class="sync-status" :class="{ 'syncing': syncStatus === 'syncing', 'error': syncStatus === 'error' }">
+                      <template x-if="syncStatus === 'synced'">
+                        <span><i class="fas fa-cloud-upload-alt"></i></span>
+                      </template>
+                      <template x-if="syncStatus === 'syncing'">
+                        <span><i class="fas fa-sync"></i></span>
+                      </template>
+                      <template x-if="syncStatus === 'error'">
+                        <span><i class="fas fa-exclamation-triangle"></i></span>
+                      </template>
+                      <template x-if="syncStatus === 'offline'">
+                        <span><i class="fas fa-save"></i></span>
+                      </template>
+                    </div>
+                  </div>
+          
+                  <!-- User avatar / auth section -->
+                  <div class="user-section">
+                    <template x-if="user">
+                      <div class="user-avatar" @click="toggleUserMenu">
+                        <template x-if="user.photoURL">
+                          <img :src="user.photoURL" alt="User avatar">
+                        </template>
+                        <template x-if="!user.photoURL">
+                          <span x-text="getUserInitial()"></span>
+                        </template>
+                      </div>
+                    </template>
+                    <template x-if="!user">
+                      <button class="button compact" @click="showAuthModal = true">Sign In</button>
+                    </template>
+                  </div>
+                </div>
+          
+                <!-- Progress section -->
+                <div class="progress-container slim">
+                  <div class="progress-label">
+                    <span>Overall Progress</span>
+                    <span x-text="overallProgress + '%'"></span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" :style="`width: ${overallProgress}%`"></div>
+                  </div>
+                </div>
+          
+                <!-- Collapsible category section -->
+                <div class="collapsible-section">
+                  <button class="toggle-categories" @click="showCategories = !showCategories">
+                    <i class="fas" :class="showCategories ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                    <span x-text="showCategories ? 'Hide Categories' : 'Show Categories'"></span>
+                  </button>
+                  
+                  <div class="category-legend" x-show="showCategories" x-transition>
+                    <div class="legend-item">
+                      <span class="category-tag tag-comptia">C</span>
+                      <span>CompTIA A+</span>
+                    </div>
+                    <div class="legend-item">
+                      <span class="category-tag tag-linux">L</span>
+                      <span>Linux Skills</span>
+                    </div>
+                    <div class="legend-item">
+                      <span class="category-tag tag-git">G</span>
+                      <span>Git & GitHub</span>
+                    </div>
+                    <div class="legend-item">
+                      <span class="category-tag tag-python">P</span>
+                      <span>Python</span>
+                    </div>
+                    <div class="legend-item">
+                      <span class="category-tag tag-review">R</span>
+                      <span>Review</span>
+                    </div>
+                    <div class="legend-item">
+                      <span class="category-tag tag-adhd">A</span>
+                      <span>ADHD Tips</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </header>
+        <!-- original Header 
         <header class="app-header">
             <div class="container">
                 <div class="header-container">
                     <div class="header-top">
                         <div class="header-brand">
                             <img src="studypathlogo.png" alt="Study Path Tracker" class="app-logo">
-                            <!-- <h1 class="app-title">Study Path Tracker</h1> -->
                         </div>
-                        
+                        <!-- user section 
                         <div class="user-section">
                             <template x-if="user">
                                 <div class="user-dropdown">
@@ -221,7 +325,7 @@
                         </template>
                     </div>
                     
-                    <!-- Progress Bar -->
+                    <!-- Progress Bar
                     <div class="progress-container">
                         <div class="progress-label">
                             <span>Overall Progress</span>
@@ -232,7 +336,7 @@
                         </div>
                     </div>
                     
-                    <!-- Desktop Navigation Tabs -->
+                    <!-- Desktop Navigation Tabs
                     <div class="desktop-tabs desktop-only">
                         <a href="#dashboard" class="tab-link" :class="{ active: activeTab === 'dashboard' }" @click.prevent="setActiveTab('dashboard')">
                             <i class="fas fa-home"></i> Dashboard
@@ -248,7 +352,7 @@
                         </a>
                     </div>
                     
-                    <!-- Category Legend -->
+                    <!-- Category Legend
                     <div class="category-legend">
                         <div class="legend-item">
                             <span class="category-tag tag-comptia">C</span>
@@ -277,7 +381,7 @@
                     </div>
                 </div>
             </div>
-        </header>
+        </header> -->
         
         <!-- Main Content -->
         <main class="main-content">

@@ -67,6 +67,11 @@ window.app = function() {
         
         // Mobile layout management
         isMobile: window.innerWidth < 768,
+
+        // New variables for header optimization
+        scrollPosition: 0,
+        showCategories: window.innerWidth >= 768, // Default expanded on desktop, collapsed on mobile
+        headerExpanded: false,
         
         // Initialize the application
         async initialize() {
@@ -173,7 +178,37 @@ window.app = function() {
                     }, 300);
                 });
             }
-        },
+             // Add scroll event listener
+            window.addEventListener('scroll', () => {
+                this.scrollPosition = window.scrollY;
+                if (this.scrollPosition <= 0) {
+                this.headerExpanded = false; // Reset when at top
+                }
+            });
+            
+            // Listen for orientation changes
+            window.addEventListener('orientationchange', () => {
+                setTimeout(() => {
+                // Reset header state on orientation change
+                this.headerExpanded = false;
+                this.showCategories = window.innerWidth >= 768;
+                }, 300);
+            });
+
+            // Update layout for mobile/desktop
+            this.updateLayoutClasses();
+            },
+        
+            // Method to handle manual header expansion
+            expandHeader() {
+            this.headerExpanded = true;
+            },
+            
+            // Method to toggle category visibility
+            toggleCategories() {
+            this.showCategories = !this.showCategories;
+            },
+
 
         // Check if browser is Safari
         isSafari() {
