@@ -1,0 +1,261 @@
+[
+  {
+    "id": "comptia-hard-drives",
+    "title": "Hard Drive Technologies",
+    "description": "Learn about hard drive interfaces, specifications, and operation",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-ram-troubleshooting"],
+    "priority": 2,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "git-installation",
+    "title": "Git Installation",
+    "description": "Install Git on both your main OS and Linux VM",
+    "category": "git",
+    "estimatedMinutes": 30,
+    "dependencies": ["linux-filesystem"],
+    "priority": 2,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "git-installation-guide",
+        "title": "Follow Git Installation Guide",
+        "category": "git",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-git-checklist",
+        "content": "Create a step-by-step installation checklist to ensure you don't miss any configuration steps"
+      }
+    ]
+  },
+  {
+    "id": "comptia-ssd",
+    "title": "Solid State Drives",
+    "description": "Learn about SSD technologies, interfaces, and performance characteristics",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-hard-drives"],
+    "priority": 2,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "git-basics",
+    "title": "Git Basics and GitHub Setup",
+    "description": "Learn basic Git concepts and set up a GitHub account",
+    "category": "git",
+    "estimatedMinutes": 30,
+    "dependencies": ["git-installation"],
+    "priority": 2,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "git-github-crash-course",
+        "title": "Git & GitHub Crash Course (first 20 minutes)",
+        "category": "git",
+        "estimatedMinutes": 20,
+        "completed": false
+      },
+      {
+        "id": "github-account-creation",
+        "title": "Create GitHub Account and First Repository",
+        "category": "git",
+        "estimatedMinutes": 10,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "comptia-storage-installation",
+    "title": "Storage Device Installation",
+    "description": "Learn how to properly install and configure storage devices",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-ssd"],
+    "priority": 2,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "git-commands",
+    "title": "Basic Git Commands",
+    "description": "Practice essential Git commands for version control",
+    "category": "git",
+    "estimatedMinutes": 30,
+    "dependencies": ["git-basics"],
+    "priority": 2,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "git-basics-tutorial",
+        "title": "Git Basics Tutorial",
+        "category": "git",
+        "estimatedMinutes": 10,
+        "completed": false
+      },
+      {
+        "id": "git-basic-commands",
+        "title": "Practice: git init, git add, git commit, git status",
+        "category": "git",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-git-workflow",
+        "content": "Create a visual Git workflow diagram to help visualize the relationship between working directory, staging area, and repository"
+      }
+    ]
+  },
+  {
+    "id": "comptia-raid",
+    "title": "RAID Technologies",
+    "description": "Learn about RAID levels, implementations, and use cases",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-storage-installation"],
+    "priority": 2,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "git-repo-management",
+    "title": "Git Repository Management",
+    "description": "Learn to manage repositories and make commits",
+    "category": "git",
+    "estimatedMinutes": 30,
+    "dependencies": ["git-commands"],
+    "priority": 2,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "git-study-repo",
+        "title": "Create a Repository for A+ Study Notes",
+        "category": "git",
+        "estimatedMinutes": 10,
+        "completed": false
+      },
+      {
+        "id": "git-first-commits",
+        "title": "Make Your First Commits",
+        "category": "git",
+        "estimatedMinutes": 10,
+        "completed": false
+      },
+      {
+        "id": "git-push",
+        "title": "Push to GitHub",
+        "category": "git",
+        "estimatedMinutes": 10,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "comptia-power-supplies",
+    "title": "Power Supplies",
+    "description": "Learn about power supply types, specifications, and connectors",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-raid"],
+    "priority": 2,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "comptia-cooling",
+    "title": "Cooling Systems",
+    "description": "Learn about computer cooling methods and thermal management",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-power-supplies"],
+    "priority": 2,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "comptia-quiz-storage",
+        "title": "Storage Devices Quiz (10 questions)",
+        "category": "review",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-pomodoro",
+        "content": "Use the Pomodoro technique (25 min study, 5 min break) to maintain focus during longer study sessions"
+      }
+    ]
+  },
+  {
+    "id": "comptia-raid-installation",
+    "title": "Installing RAID",
+    "description": "Learn how to configure and implement RAID arrays",
+    "category": "comptia",
+    "estimatedMinutes": 45,
+    "dependencies": ["comptia-cooling"],
+    "priority": 2,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "comptia-raid-research",
+        "title": "Research Different RAID Configurations",
+        "category": "comptia",
+        "estimatedMinutes": 20,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "git-branching",
+    "title": "Git Branching Concepts",
+    "description": "Learn about branches, merging, and collaboration workflows",
+    "category": "git",
+    "estimatedMinutes": 45,
+    "dependencies": ["git-repo-management"],
+    "priority": 2,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "git-branching-tutorial",
+        "title": "Git Branching Tutorial",
+        "category": "git",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "git-branch-practice",
+        "title": "Practice Creating Branches and Merging",
+        "category": "git",
+        "estimatedMinutes": 20,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-git-branches",
+        "content": "Use sticky notes to physically track different branches and their relationships to help visualize the branching structure"
+      }
+    ]
+  }
+]

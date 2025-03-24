@@ -1,0 +1,261 @@
+[
+  {
+    "id": "comptia-display-tech",
+    "title": "Display Technologies",
+    "description": "Learn about different display technologies, resolutions, and specifications",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-raid-installation"],
+    "priority": 3,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "linux-file-permissions",
+    "title": "Linux File Permissions",
+    "description": "Learn about Linux file ownership and permission system",
+    "category": "linux",
+    "estimatedMinutes": 30,
+    "dependencies": ["linux-filesystem", "git-branching"],
+    "priority": 3,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "linux-permissions-tutorial",
+        "title": "Linux Permissions Tutorial",
+        "category": "linux",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "linux-permissions-practice",
+        "title": "Practice: chmod, chown, ls -l",
+        "category": "linux",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-permission-card",
+        "content": "Create a permissions reference card with examples to help visualize how permissions work"
+      }
+    ]
+  },
+  {
+    "id": "comptia-video-connectors",
+    "title": "Video Connectors",
+    "description": "Learn about different video connectors, cables, and their specifications",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-display-tech"],
+    "priority": 3,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "linux-package-management",
+    "title": "Linux Package Management",
+    "description": "Learn how to install, update, and manage software in Linux",
+    "category": "linux",
+    "estimatedMinutes": 30,
+    "dependencies": ["linux-file-permissions"],
+    "priority": 3,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "linux-apt-tutorial",
+        "title": "APT Package Management",
+        "category": "linux",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "linux-apt-practice",
+        "title": "Practice: apt update, apt install, apt remove",
+        "category": "linux",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "comptia-display-config",
+    "title": "Display Configuration",
+    "description": "Learn how to configure and troubleshoot display settings",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-video-connectors"],
+    "priority": 3,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "linux-text-editors",
+    "title": "Linux Text Editors",
+    "description": "Learn to use text editors in Linux environment",
+    "category": "linux",
+    "estimatedMinutes": 30,
+    "dependencies": ["linux-package-management"],
+    "priority": 3,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "linux-nano-basics",
+        "title": "Nano Editor Basics",
+        "category": "linux",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "linux-editing-practice",
+        "title": "Practice Creating and Editing Files",
+        "category": "linux",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-nano-cheatsheet",
+        "content": "Create a cheat sheet of nano commands to help remember keyboard shortcuts"
+      }
+    ]
+  },
+  {
+    "id": "comptia-input-devices",
+    "title": "Input Devices",
+    "description": "Learn about different input devices and their interfaces",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-display-config"],
+    "priority": 3,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "linux-bash-intro",
+    "title": "Introduction to Bash Scripting",
+    "description": "Learn the basics of Bash shell scripting in Linux",
+    "category": "linux",
+    "estimatedMinutes": 30,
+    "dependencies": ["linux-text-editors"],
+    "priority": 3,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "linux-bash-tutorial",
+        "title": "Bash Scripting Tutorial",
+        "category": "linux",
+        "estimatedMinutes": 20,
+        "completed": false
+      },
+      {
+        "id": "linux-first-script",
+        "title": "Create Your First Shell Script",
+        "category": "linux",
+        "estimatedMinutes": 10,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "comptia-usb",
+    "title": "USB Standards",
+    "description": "Learn about USB specifications, versions, and connectors",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-input-devices"],
+    "priority": 3,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "comptia-printers",
+    "title": "Printer Technologies",
+    "description": "Learn about different printer types and technologies",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-usb"],
+    "priority": 3,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "comptia-quiz-display",
+        "title": "Display Technologies Quiz (10 questions)",
+        "category": "review",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-usb-comparison",
+        "content": "Create a comparison table of USB versions with colors to help distinguish different standards"
+      }
+    ]
+  },
+  {
+    "id": "comptia-bios-uefi",
+    "title": "BIOS/UEFI and Boot Process",
+    "description": "Learn about system firmware and the boot sequence",
+    "category": "comptia",
+    "estimatedMinutes": 45,
+    "dependencies": ["comptia-printers"],
+    "priority": 3,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "comptia-boot-flowchart",
+        "title": "Create a Flowchart of the Boot Process",
+        "category": "comptia",
+        "estimatedMinutes": 20,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "linux-bash-practice",
+    "title": "Bash Scripting Practice",
+    "description": "Develop practical Bash scripts for file management",
+    "category": "linux",
+    "estimatedMinutes": 45,
+    "dependencies": ["linux-bash-intro"],
+    "priority": 3,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "linux-organize-script",
+        "title": "Create a Script to Organize Files by Extension",
+        "category": "linux",
+        "estimatedMinutes": 20,
+        "completed": false
+      },
+      {
+        "id": "linux-test-script",
+        "title": "Test the Script on Your Linux VM",
+        "category": "linux",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-work-blocks",
+        "content": "Work in 20-minute blocks with short movement breaks to maintain focus and energy"
+      }
+    ]
+  }
+]

@@ -1,0 +1,261 @@
+[
+  {
+    "id": "comptia-mobile-hardware",
+    "title": "Mobile Device Hardware",
+    "description": "Learn about smartphone and tablet hardware components",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-bios-uefi"],
+    "priority": 4,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "python-setup",
+    "title": "Python Setup and First Steps",
+    "description": "Set up Python development environment and write first program",
+    "category": "python",
+    "estimatedMinutes": 30,
+    "dependencies": ["linux-bash-practice"],
+    "priority": 4,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "python-environment",
+        "title": "Python Environment Setup",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "python-hello-world",
+        "title": "Write Your First \"Hello World\" Program",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-ide-colors",
+        "content": "Customize your Python IDE with colors that help you focus and make code easier to read"
+      }
+    ]
+  },
+  {
+    "id": "comptia-mobile-displays",
+    "title": "Mobile Display Types",
+    "description": "Learn about mobile device display technologies",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-mobile-hardware"],
+    "priority": 4,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "python-variables",
+    "title": "Python Variables and Data Types",
+    "description": "Learn about Python's data types and variable declaration",
+    "category": "python",
+    "estimatedMinutes": 30,
+    "dependencies": ["python-setup"],
+    "priority": 4,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "python-variables-tutorial",
+        "title": "Python Variables Tutorial",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "python-data-types",
+        "title": "Practice Exercises with Different Data Types",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "comptia-mobile-battery",
+    "title": "Mobile Device Battery",
+    "description": "Learn about mobile battery technologies and management",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-mobile-displays"],
+    "priority": 4,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "python-conditionals",
+    "title": "Python Conditionals (if/else)",
+    "description": "Learn about conditional statements in Python",
+    "category": "python",
+    "estimatedMinutes": 30,
+    "dependencies": ["python-variables"],
+    "priority": 4,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "python-conditionals-tutorial",
+        "title": "Python Conditionals Tutorial",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "python-conditional-program",
+        "title": "Write a Program with Conditional Logic",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-logic-flowcharts",
+        "content": "Draw flowcharts of your conditional logic before coding to visualize the program flow"
+      }
+    ]
+  },
+  {
+    "id": "comptia-mobile-connectivity",
+    "title": "Mobile Device Connectivity",
+    "description": "Learn about mobile networking technologies and protocols",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-mobile-battery"],
+    "priority": 4,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "python-loops",
+    "title": "Python Loops",
+    "description": "Learn about loop structures in Python",
+    "category": "python",
+    "estimatedMinutes": 30,
+    "dependencies": ["python-conditionals"],
+    "priority": 4,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "python-loops-tutorial",
+        "title": "Python Loops Tutorial",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "python-loop-programs",
+        "title": "Write Programs Using For and While Loops",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "comptia-mobile-accessories",
+    "title": "Mobile Device Accessories",
+    "description": "Learn about common mobile accessories and their functions",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-mobile-connectivity"],
+    "priority": 4,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "comptia-mobile-sync",
+    "title": "Mobile Device Synchronization",
+    "description": "Learn about syncing data between mobile devices and computers",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-mobile-accessories"],
+    "priority": 4,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "comptia-quiz-mobile",
+        "title": "Mobile Devices Quiz (10 questions)",
+        "category": "review",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-mind-map-mobile",
+        "content": "Create a mind map of mobile device concepts to visualize how different technologies relate to each other"
+      }
+    ]
+  },
+  {
+    "id": "comptia-hw-diagnostics",
+    "title": "Hardware Diagnostic Indicators",
+    "description": "Learn about diagnostic LEDs, beep codes, and error messages",
+    "category": "comptia",
+    "estimatedMinutes": 45,
+    "dependencies": ["comptia-mobile-sync"],
+    "priority": 4,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "comptia-troubleshooting-guide",
+        "title": "Create a Troubleshooting Reference Guide",
+        "category": "comptia",
+        "estimatedMinutes": 20,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "python-functions",
+    "title": "Python Functions",
+    "description": "Learn about defining and using functions in Python",
+    "category": "python",
+    "estimatedMinutes": 45,
+    "dependencies": ["python-loops"],
+    "priority": 4,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "python-functions-tutorial",
+        "title": "Python Functions Tutorial",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "python-multiple-functions",
+        "title": "Create a Program with Multiple Functions",
+        "category": "python",
+        "estimatedMinutes": 20,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-code-comments",
+        "content": "Use comments liberally in your code to maintain focus and document your thinking process"
+      }
+    ]
+  }
+]

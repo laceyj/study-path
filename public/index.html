@@ -16,6 +16,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-storage-compat.js"></script>
+    
     <!-- Scripts in the correct order -->
     <script src="firebase-config.js"></script>
     <script src="study-scheduler.js"></script>
@@ -28,7 +29,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Main CSS -->
-    <link rel="stylesheet" href="styles.css?v=1.2">
+    <link rel="stylesheet" href="styles.css">
     
     <!-- Debug helpers -->
     <script src="debug-helpers.js"></script>
@@ -166,121 +167,32 @@
                 </div>
             </div>
         </div>
-        <!-- testing new header for iOS improvements-->
-        <header class="app-header" :class="{ 'collapsed': scrollPosition > 50 && !headerExpanded }">
-            <div class="container">
-              <!-- Mini header (shows when collapsed) -->
-              <div class="mini-header">
-                <div class="mini-header-content">
-                  <span class="mini-logo">SP</span>
-                  <div class="mini-progress">
-                    <div class="mini-progress-bar">
-                      <div class="mini-progress-fill" :style="`width: ${overallProgress}%`"></div>
-                    </div>
-                  </div>
-                  <button @click="headerExpanded = true" class="expand-button">
-                    <i class="fas fa-chevron-down"></i>
-                  </button>
-                </div>
-              </div>
-          
-              <!-- Full header (condensed version) -->
-              <div class="header-container">
-                <div class="compact-header">
-                  <!-- Logo and sync in one row -->
-                  <div class="logo-container">
-                    <img src="studypathlogo.png" alt="Study Path" class="app-logo-small">
-                    <div class="sync-status" :class="{ 'syncing': syncStatus === 'syncing', 'error': syncStatus === 'error' }">
-                      <template x-if="syncStatus === 'synced'">
-                        <span><i class="fas fa-cloud-upload-alt"></i></span>
-                      </template>
-                      <template x-if="syncStatus === 'syncing'">
-                        <span><i class="fas fa-sync"></i></span>
-                      </template>
-                      <template x-if="syncStatus === 'error'">
-                        <span><i class="fas fa-exclamation-triangle"></i></span>
-                      </template>
-                      <template x-if="syncStatus === 'offline'">
-                        <span><i class="fas fa-save"></i></span>
-                      </template>
-                    </div>
-                  </div>
-          
-                  <!-- User avatar / auth section -->
-                  <div class="user-section">
-                    <template x-if="user">
-                      <div class="user-avatar" @click="toggleUserMenu">
-                        <template x-if="user.photoURL">
-                          <img :src="user.photoURL" alt="User avatar">
-                        </template>
-                        <template x-if="!user.photoURL">
-                          <span x-text="getUserInitial()"></span>
-                        </template>
-                      </div>
-                    </template>
-                    <template x-if="!user">
-                      <button class="button compact" @click="showAuthModal = true">Sign In</button>
-                    </template>
-                  </div>
-                </div>
-          
-                <!-- Progress section -->
-                <div class="progress-container slim">
-                  <div class="progress-label">
-                    <span>Overall Progress</span>
-                    <span x-text="overallProgress + '%'"></span>
-                  </div>
-                  <div class="progress-bar">
-                    <div class="progress-fill" :style="`width: ${overallProgress}%`"></div>
-                  </div>
-                </div>
-          
-                <!-- Collapsible category section -->
-                <div class="collapsible-section">
-                  <button class="toggle-categories" @click="showCategories = !showCategories">
-                    <i class="fas" :class="showCategories ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-                    <span x-text="showCategories ? 'Hide Categories' : 'Show Categories'"></span>
-                  </button>
-                  
-                  <div class="category-legend" x-show="showCategories" x-transition>
-                    <div class="legend-item">
-                      <span class="category-tag tag-comptia">C</span>
-                      <span>CompTIA A+</span>
-                    </div>
-                    <div class="legend-item">
-                      <span class="category-tag tag-linux">L</span>
-                      <span>Linux Skills</span>
-                    </div>
-                    <div class="legend-item">
-                      <span class="category-tag tag-git">G</span>
-                      <span>Git & GitHub</span>
-                    </div>
-                    <div class="legend-item">
-                      <span class="category-tag tag-python">P</span>
-                      <span>Python</span>
-                    </div>
-                    <div class="legend-item">
-                      <span class="category-tag tag-review">R</span>
-                      <span>Review</span>
-                    </div>
-                    <div class="legend-item">
-                      <span class="category-tag tag-adhd">A</span>
-                      <span>ADHD Tips</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </header>
-        <!-- original Header 
-        <header class="app-header">
+
+        <!-- Desktop Header (hidden on mobile) -->
+        <header class="app-header desktop-only">
             <div class="container">
                 <div class="header-container">
                     <div class="header-top">
                         <div class="header-brand">
                             <img src="studypathlogo.png" alt="Study Path Tracker" class="app-logo">
                         </div>
-                        <!-- user section 
+
+                        <div class="sync-status" :class="{ 'syncing': syncStatus === 'syncing', 'error': syncStatus === 'error' }">
+                            <template x-if="syncStatus === 'synced'">
+                                <span><i class="fas fa-cloud-upload-alt"></i> Synced with cloud</span>
+                            </template>
+                            <template x-if="syncStatus === 'syncing'">
+                                <span><i class="fas fa-sync"></i> Syncing with cloud...</span>
+                            </template>
+                            <template x-if="syncStatus === 'error'">
+                                <span><i class="fas fa-exclamation-triangle"></i> Sync error - using local storage</span>
+                            </template>
+                            <template x-if="syncStatus === 'offline'">
+                                <span><i class="fas fa-save"></i> Using local storage (offline)</span>
+                            </template>
+                        </div>
+                        
+                        <!-- User avatar / auth section -->
                         <div class="user-section">
                             <template x-if="user">
                                 <div class="user-dropdown">
@@ -303,41 +215,25 @@
                                     </div>
                                 </div>
                             </template>
-                            
                             <template x-if="!user">
                                 <button class="button compact" @click="showAuthModal = true">Sign In</button>
                             </template>
                         </div>
                     </div>
-                    
-                    <div class="sync-status" :class="{ 'syncing': syncStatus === 'syncing', 'error': syncStatus === 'error' }">
-                        <template x-if="syncStatus === 'synced'">
-                            <span><i class="fas fa-cloud-upload-alt"></i> Synced with cloud</span>
-                        </template>
-                        <template x-if="syncStatus === 'syncing'">
-                            <span><i class="fas fa-sync"></i> Syncing with cloud...</span>
-                        </template>
-                        <template x-if="syncStatus === 'error'">
-                            <span><i class="fas fa-exclamation-triangle"></i> Sync error - using local storage</span>
-                        </template>
-                        <template x-if="syncStatus === 'offline'">
-                            <span><i class="fas fa-save"></i> Using local storage (offline)</span>
-                        </template>
-                    </div>
-                    
-                    <!-- Progress Bar
-                    <div class="progress-container">
+          
+                    <!-- Progress section -->
+                    <div class="progress-container main-progress">
                         <div class="progress-label">
                             <span>Overall Progress</span>
-                            <span x-text="overallProgress + '%'"></span>
+                            <span id="progress-percentage" x-text="overallProgress + '%'"></span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" :style="`width: ${overallProgress}%`"></div>
+                            <div class="progress-fill" id="progress-fill" :style="`width: ${overallProgress}%`"></div>
                         </div>
                     </div>
                     
-                    <!-- Desktop Navigation Tabs
-                    <div class="desktop-tabs desktop-only">
+                    <!-- Desktop Navigation Tabs -->
+                    <div class="desktop-tabs">
                         <a href="#dashboard" class="tab-link" :class="{ active: activeTab === 'dashboard' }" @click.prevent="setActiveTab('dashboard')">
                             <i class="fas fa-home"></i> Dashboard
                         </a>
@@ -351,9 +247,8 @@
                             <i class="fas fa-chart-bar"></i> Stats
                         </a>
                     </div>
-                    
-                    <!-- Category Legend
-                    <div class="category-legend">
+                      
+                    <div class="category-legend" x-show="showCategories" x-transition>
                         <div class="legend-item">
                             <span class="category-tag tag-comptia">C</span>
                             <span>CompTIA A+</span>
@@ -381,7 +276,97 @@
                     </div>
                 </div>
             </div>
-        </header> -->
+        </header>
+
+        <!-- Mobile Optimized Header (hidden on desktop) -->
+        <div class="mobile-optimized-header mobile-only" :class="{ 'collapsed': scrollPosition > 50 && !headerExpanded }">
+            <!-- Mini header (when collapsed) -->
+            <div class="mobile-mini-header" x-show="scrollPosition > 50 && !headerExpanded">
+                <div class="mobile-mini-content">
+                    <span class="mobile-mini-logo">SP</span>
+                    <div class="mobile-mini-progress">
+                        <div class="mobile-mini-bar">
+                            <div class="mobile-mini-fill" :style="`width: ${overallProgress}%`"></div>
+                        </div>
+                    </div>
+                    <button @click="headerExpanded = true" class="mobile-expand-btn">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Full mobile header content -->
+            <div class="mobile-header-full">
+                <div class="mobile-compact-row">
+                    <!-- Logo and sync -->
+                    <div class="mobile-logo-wrapper">
+                        <img src="studypathlogo.png" alt="Study Path" class="mobile-logo">
+                        <div class="mobile-sync">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                    </div>
+
+                    <!-- User section -->
+                    <div class="mobile-user">
+                        <template x-if="user">
+                            <div class="user-avatar" @click="toggleUserMenu">
+                                <span x-text="getUserInitial()"></span>
+                            </div>
+                        </template>
+                        <template x-if="!user">
+                            <button class="button compact" @click="showAuthModal = true">Sign In</button>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Mobile progress bar -->
+                <div class="mobile-progress">
+                    <div class="mobile-progress-text">
+                        <span>Overall Progress</span>
+                        <span x-text="overallProgress + '%'"></span>
+                    </div>
+                    <div class="mobile-progress-track">
+                        <div class="mobile-progress-indicator" :style="`width: ${overallProgress}%`"></div>
+                    </div>
+                </div>
+
+                <!-- Collapsible categories -->
+                <div class="mobile-categories-section">
+                    <button class="mobile-categories-toggle" @click="showCategories = !showCategories">
+                        <i class="fas" :class="showCategories ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                        <span x-text="showCategories ? 'Hide Categories' : 'Show Categories'"></span>
+                    </button>
+                    
+                    <div class="mobile-categories-grid" x-show="showCategories" x-transition>
+                        <!-- Category tags -->
+                        <div class="mobile-category-item">
+                            <span class="category-tag tag-comptia">C</span>
+                            <span>CompTIA A+</span>
+                        </div>
+                        <div class="mobile-category-item">
+                            <span class="category-tag tag-linux">L</span>
+                            <span>Linux Skills</span>
+                        </div>
+                        <div class="mobile-category-item">
+                            <span class="category-tag tag-git">G</span>
+                            <span>Git & GitHub</span>
+                        </div>
+                        <div class="mobile-category-item">
+                            <span class="category-tag tag-python">P</span>
+                            <span>Python</span>
+                        </div>
+                        <div class="mobile-category-item">
+                            <span class="category-tag tag-review">R</span>
+                            <span>Review</span>
+                        </div>
+                        <div class="mobile-category-item">
+                            <span class="category-tag tag-adhd">A</span>
+                            <span>ADHD Tips</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <!-- Main Content -->
         <main class="main-content">
@@ -703,17 +688,20 @@
                             </div>
                             <div class="day-details-tasks">
                                 <h3>Tasks for this day (<span x-text="selectedDay && selectedDay.tasks ? selectedDay.tasks.length : 0"></span>)</h3>
-                    
-                    <!-- Check if tasks exist and are not empty -->
-                    <template x-if="selectedDay && selectedDay.tasks && selectedDay.tasks.length > 0">
-                        <div x-html="renderTaskList(selectedDay.tasks)"></div>
-                    </template>
-                    
-                    <!-- Show message if no tasks -->
-                    <template x-if="!selectedDay || !selectedDay.tasks || selectedDay.tasks.length === 0">
-                        <p>No tasks scheduled for this day.</p>
-                    </template>
-                </div>
+                                
+                                <!-- Check if tasks exist and are not empty -->
+                                <template x-if="selectedDay && selectedDay.tasks && selectedDay.tasks.length > 0">
+                                    <div x-html="renderTaskList(selectedDay.tasks)"></div>
+                                </template>
+                                
+                                <!-- Show message if no tasks -->
+                                <template x-if="!selectedDay || !selectedDay.tasks || selectedDay.tasks.length === 0">
+                                    <p>No tasks scheduled for this day.</p>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </template>
             </div>
         </div>
 

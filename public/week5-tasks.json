@@ -1,0 +1,261 @@
+[
+  {
+    "id": "comptia-osi-model",
+    "title": "The OSI Model",
+    "description": "Learn the seven layers of the OSI model and their functions",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-hw-diagnostics"],
+    "priority": 5,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "python-file-io",
+    "title": "Python File Operations",
+    "description": "Learn to read and write files in Python",
+    "category": "python",
+    "estimatedMinutes": 30,
+    "dependencies": ["python-functions"],
+    "priority": 5,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "python-file-tutorial",
+        "title": "Python File I/O Tutorial",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "python-file-practice",
+        "title": "Practice Reading and Writing Files",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-osi-mnemonic",
+        "content": "Create a mnemonic for OSI layers (e.g., 'Please Do Not Throw Sausage Pizza Away' for Physical, Data Link, Network, Transport, Session, Presentation, Application)"
+      }
+    ]
+  },
+  {
+    "id": "comptia-tcp-ip",
+    "title": "The TCP/IP Model",
+    "description": "Learn the TCP/IP protocol suite and how it relates to OSI",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-osi-model"],
+    "priority": 5,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "python-lists-tuples",
+    "title": "Python Lists and Tuples",
+    "description": "Learn about sequence data types in Python",
+    "category": "python",
+    "estimatedMinutes": 30,
+    "dependencies": ["python-file-io"],
+    "priority": 5,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "python-lists-tutorial",
+        "title": "Python Lists Tutorial",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "python-list-manipulation",
+        "title": "Write Programs that Manipulate Lists",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "comptia-ipv4-addressing",
+    "title": "IPv4 Addressing",
+    "description": "Learn about IP addressing, subnetting, and CIDR notation",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-tcp-ip"],
+    "priority": 5,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "python-dictionaries",
+    "title": "Python Dictionaries",
+    "description": "Learn about key-value pairs in Python dictionaries",
+    "category": "python",
+    "estimatedMinutes": 30,
+    "dependencies": ["python-lists-tuples"],
+    "priority": 5,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "python-dict-tutorial",
+        "title": "Python Dictionaries Tutorial",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "python-dict-programs",
+        "title": "Create Programs Using Key-Value Pairs",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-dict-metaphor",
+        "content": "Use visual metaphors like actual dictionaries or labeled boxes to understand dictionary concepts"
+      }
+    ]
+  },
+  {
+    "id": "comptia-dhcp",
+    "title": "DHCP Configuration",
+    "description": "Learn about Dynamic Host Configuration Protocol and its implementation",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-ipv4-addressing"],
+    "priority": 5,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "python-error-handling",
+    "title": "Python Error Handling",
+    "description": "Learn about exceptions and error handling in Python",
+    "category": "python",
+    "estimatedMinutes": 30,
+    "dependencies": ["python-dictionaries"],
+    "priority": 5,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "python-try-except",
+        "title": "Python Try/Except Tutorial",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "python-exception-handling",
+        "title": "Write Programs with Proper Exception Handling",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "comptia-dns",
+    "title": "DNS Configuration",
+    "description": "Learn about Domain Name System and name resolution",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-dhcp"],
+    "priority": 5,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "comptia-ip-tools",
+    "title": "IP Configuration Tools",
+    "description": "Learn about command-line tools for network configuration and troubleshooting",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-dns"],
+    "priority": 5,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "comptia-quiz-networking",
+        "title": "Networking Quiz (10 questions)",
+        "category": "review",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-ip-tools",
+        "content": "Practice IP tools on both your main OS and Linux VM to reinforce learning through different interfaces"
+      }
+    ]
+  },
+  {
+    "id": "comptia-network-types",
+    "title": "Network Types and Network Devices",
+    "description": "Learn about different network topologies and networking hardware",
+    "category": "comptia",
+    "estimatedMinutes": 45,
+    "dependencies": ["comptia-ip-tools"],
+    "priority": 5,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "comptia-network-diagram",
+        "title": "Create a Diagram of Network Infrastructure",
+        "category": "comptia",
+        "estimatedMinutes": 20,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "python-network-project",
+    "title": "Python Network Mini-Project",
+    "description": "Create a practical Python application for networking tasks",
+    "category": "python",
+    "estimatedMinutes": 45,
+    "dependencies": ["python-error-handling", "comptia-ipv4-addressing"],
+    "priority": 5,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "python-ip-converter",
+        "title": "Create a Script that Converts IP Addresses to Binary",
+        "category": "python",
+        "estimatedMinutes": 20,
+        "completed": false
+      },
+      {
+        "id": "python-ip-checker",
+        "title": "Add Functionality to Check if an IP is Private or Public",
+        "category": "python",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-small-tasks",
+        "content": "Break your project into small, manageable tasks and celebrate completing each milestone"
+      }
+    ]
+  }
+]

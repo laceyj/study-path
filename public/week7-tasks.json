@@ -1,0 +1,261 @@
+[
+  {
+    "id": "comptia-windows-versions",
+    "title": "Windows Versions",
+    "description": "Learn about different Windows operating system versions and their features",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-security-fundamentals"],
+    "priority": 7,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "git-collaboration",
+    "title": "Git Collaboration Fundamentals",
+    "description": "Learn how to use Git for team collaboration and code sharing",
+    "category": "git",
+    "estimatedMinutes": 30,
+    "dependencies": ["git-branching", "linux-network-troubleshoot"],
+    "priority": 7,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "git-collab-tutorial",
+        "title": "Git Collaboration Tutorial",
+        "category": "git",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "git-remote-repos",
+        "title": "Learn About Remote Repositories and Collaboration Workflows",
+        "category": "git",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-git-workflow-diagram",
+        "content": "Draw a diagram of the collaboration workflow to visualize how changes move between repositories"
+      }
+    ]
+  },
+  {
+    "id": "comptia-windows-features",
+    "title": "Windows Features",
+    "description": "Learn about key Windows features and functionality",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-windows-versions"],
+    "priority": 7,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "git-branching-strategies",
+    "title": "Git Branching Strategies",
+    "description": "Learn about advanced branching workflows like Git Flow",
+    "category": "git",
+    "estimatedMinutes": 30,
+    "dependencies": ["git-collaboration"],
+    "priority": 7,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "git-flow-workflow",
+        "title": "Git Flow Workflow",
+        "category": "git",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "git-feature-branches",
+        "title": "Setup a Project with Feature Branches",
+        "category": "git",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "comptia-windows-installation",
+    "title": "Windows Installation Methods",
+    "description": "Learn about different ways to install and deploy Windows",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-windows-features"],
+    "priority": 7,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "git-merge-conflicts",
+    "title": "Git Merge Conflicts",
+    "description": "Learn how to handle and resolve merge conflicts",
+    "category": "git",
+    "estimatedMinutes": 30,
+    "dependencies": ["git-branching-strategies"],
+    "priority": 7,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "git-merge-tutorial",
+        "title": "Git Merge Conflicts Tutorial",
+        "category": "git",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "git-conflict-practice",
+        "title": "Practice Resolving Conflicts",
+        "category": "git",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-visual-diff",
+        "content": "Use visual diff tools to make conflict resolution easier to understand and manage"
+      }
+    ]
+  },
+  {
+    "id": "comptia-windows-post-install",
+    "title": "Windows Post-Installation",
+    "description": "Learn about configuration steps after installing Windows",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-windows-installation"],
+    "priority": 7,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "git-best-practices",
+    "title": "Git Best Practices",
+    "description": "Learn recommended practices for effective Git usage",
+    "category": "git",
+    "estimatedMinutes": 30,
+    "dependencies": ["git-merge-conflicts"],
+    "priority": 7,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "git-best-practices-tutorial",
+        "title": "Git Best Practices Tutorial",
+        "category": "git",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "git-commit-messages",
+        "title": "Practice Writing Good Commit Messages",
+        "category": "git",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "comptia-windows-control-panel",
+    "title": "Windows Control Panel & Settings",
+    "description": "Learn about Windows system configuration tools",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-windows-post-install"],
+    "priority": 7,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "comptia-windows-security",
+    "title": "Windows Security Settings",
+    "description": "Learn about Windows security features and configuration",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-windows-control-panel"],
+    "priority": 7,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "comptia-quiz-windows",
+        "title": "Windows Quiz (10 questions)",
+        "category": "review",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-security-checklist",
+        "content": "Create a Windows security checklist that you can reference when setting up new systems"
+      }
+    ]
+  },
+  {
+    "id": "comptia-windows-tools",
+    "title": "Windows Troubleshooting Tools and Command Line Tools",
+    "description": "Learn about Windows diagnostic utilities and command-line tools",
+    "category": "comptia",
+    "estimatedMinutes": 45,
+    "dependencies": ["comptia-windows-security"],
+    "priority": 7,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "comptia-windows-troubleshoot",
+        "title": "Create a Windows Troubleshooting Reference Guide",
+        "category": "comptia",
+        "estimatedMinutes": 20,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "git-github-pages",
+    "title": "GitHub Pages Setup",
+    "description": "Learn to create and deploy static websites with GitHub Pages",
+    "category": "git",
+    "estimatedMinutes": 45,
+    "dependencies": ["git-best-practices"],
+    "priority": 7,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "git-pages-tutorial",
+        "title": "GitHub Pages Tutorial",
+        "category": "git",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "git-study-website",
+        "title": "Create a Simple Website for Your Study Notes",
+        "category": "git",
+        "estimatedMinutes": 20,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-website-sketch",
+        "content": "Sketch your website layout before implementation to help organize your thoughts and content"
+      }
+    ]
+  }
+]

@@ -1,0 +1,261 @@
+[
+  {
+    "id": "comptia-network-cables",
+    "title": "Network Cables",
+    "description": "Learn about different types of network cables, connectors, and their specifications",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-network-types"],
+    "priority": 6,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "linux-network-config",
+    "title": "Linux Network Configuration",
+    "description": "Learn how to configure network settings in Linux",
+    "category": "linux",
+    "estimatedMinutes": 30,
+    "dependencies": ["linux-bash-practice", "comptia-network-types"],
+    "priority": 6,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "linux-network-tutorial",
+        "title": "Linux Network Configuration Tutorial",
+        "category": "linux",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "linux-network-practice",
+        "title": "Practice Configuring Network Settings in Your VM",
+        "category": "linux",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-network-checklist",
+        "content": "Create a network configuration checklist to ensure you don't miss any important settings"
+      }
+    ]
+  },
+  {
+    "id": "comptia-ethernet-standards",
+    "title": "Ethernet Standards",
+    "description": "Learn about Ethernet specifications, speeds, and implementation standards",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-network-cables"],
+    "priority": 6,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "linux-services",
+    "title": "Linux Services",
+    "description": "Learn how to manage system services in Linux",
+    "category": "linux",
+    "estimatedMinutes": 30,
+    "dependencies": ["linux-network-config"],
+    "priority": 6,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "linux-services-tutorial",
+        "title": "Linux Services Tutorial",
+        "category": "linux",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "linux-systemctl",
+        "title": "Practice: systemctl Commands",
+        "category": "linux",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "comptia-wireless-standards",
+    "title": "Wireless Standards",
+    "description": "Learn about Wi-Fi standards, frequencies, and protocols",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-ethernet-standards"],
+    "priority": 6,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "linux-network-commands",
+    "title": "Linux Networking Commands",
+    "description": "Learn essential networking commands in Linux",
+    "category": "linux",
+    "estimatedMinutes": 30,
+    "dependencies": ["linux-services"],
+    "priority": 6,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "linux-network-cmd-tutorial",
+        "title": "Linux Networking Commands Tutorial",
+        "category": "linux",
+        "estimatedMinutes": 10,
+        "completed": false
+      },
+      {
+        "id": "linux-network-cmd-practice",
+        "title": "Practice: ping, ifconfig/ip, netstat, traceroute",
+        "category": "linux",
+        "estimatedMinutes": 20,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-cmd-cheatsheet",
+        "content": "Create a networking commands cheat sheet with examples of how to use each command"
+      }
+    ]
+  },
+  {
+    "id": "comptia-wireless-security",
+    "title": "Wireless Security",
+    "description": "Learn about wireless security protocols and encryption standards",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-wireless-standards"],
+    "priority": 6,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "linux-ssh",
+    "title": "SSH in Linux",
+    "description": "Learn about Secure Shell protocol and remote server management",
+    "category": "linux",
+    "estimatedMinutes": 30,
+    "dependencies": ["linux-network-commands"],
+    "priority": 6,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "linux-ssh-tutorial",
+        "title": "SSH Tutorial",
+        "category": "linux",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "linux-ssh-keys",
+        "title": "Practice Setting Up SSH Keys",
+        "category": "linux",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "comptia-wireless-install",
+    "title": "Installing Wireless Networks",
+    "description": "Learn about wireless network implementation and configuration",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-wireless-security"],
+    "priority": 6,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": []
+  },
+  {
+    "id": "comptia-wireless-troubleshoot",
+    "title": "Troubleshooting Wireless Issues",
+    "description": "Learn common wireless network problems and solutions",
+    "category": "comptia",
+    "estimatedMinutes": 30,
+    "dependencies": ["comptia-wireless-install"],
+    "priority": 6,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "comptia-quiz-wireless",
+        "title": "Wireless Networking Quiz (10 questions)",
+        "category": "review",
+        "estimatedMinutes": 15,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-wireless-flowchart",
+        "content": "Create a wireless troubleshooting flowchart to visualize the diagnostic process"
+      }
+    ]
+  },
+  {
+    "id": "comptia-security-fundamentals",
+    "title": "Security Fundamentals and Network Security Devices",
+    "description": "Learn about basic network security concepts and hardware",
+    "category": "comptia",
+    "estimatedMinutes": 45,
+    "dependencies": ["comptia-wireless-troubleshoot"],
+    "priority": 6,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "comptia-security-guide",
+        "title": "Create a Network Security Reference Guide",
+        "category": "comptia",
+        "estimatedMinutes": 20,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "linux-network-troubleshoot",
+    "title": "Linux Network Troubleshooting",
+    "description": "Learn network diagnostic and troubleshooting techniques in Linux",
+    "category": "linux",
+    "estimatedMinutes": 45,
+    "dependencies": ["linux-ssh"],
+    "priority": 6,
+    "completed": false,
+    "completedDate": null,
+    "subtasks": [
+      {
+        "id": "linux-troubleshoot-tutorial",
+        "title": "Network Troubleshooting in Linux",
+        "category": "linux",
+        "estimatedMinutes": 15,
+        "completed": false
+      },
+      {
+        "id": "linux-diagnostic-commands",
+        "title": "Practice Diagnostic Commands in Your VM",
+        "category": "linux",
+        "estimatedMinutes": 20,
+        "completed": false
+      }
+    ],
+    "adhd_tips": [
+      {
+        "id": "adhd-troubleshoot-tree",
+        "content": "Create a troubleshooting decision tree to help work through complex problems methodically"
+      }
+    ]
+  }
+]

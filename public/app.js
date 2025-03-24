@@ -78,10 +78,14 @@ window.app = function() {
             // Set up event listeners
             this.setupEventListeners();
             console.log("Initializing app...");
-    
+        
+            // Important: Set initial state based on screen size immediately
+            this.isMobile = window.innerWidth < 768;
+            this.showCategories = window.innerWidth >= 768; // Show categories by default on desktop
+            
             // Set initial layout class
             this.updateLayoutClasses();
-
+        
             // Wait for Firebase Auth to initialize
             await new Promise(resolve => {
                 const unsubscribe = firebase.auth().onAuthStateChanged(user => {
@@ -126,8 +130,7 @@ window.app = function() {
                 document.documentElement.classList.add('dark-mode');
             }
         
-            // Then try to authenticate and load from Firebase
-            await this.checkAuthState();
+            // Load progress data
             console.log("Loading progress data...");
                 
             // Load from localStorage first for immediate display
@@ -148,15 +151,14 @@ window.app = function() {
                     // Regenerate schedule with loaded progress
                     this.generateSchedule();
                     this.calculateProgress();
-
+        
                 } catch (error) {
                     console.error("Error parsing localStorage progress:", error);
                 }
             } else {
                 console.log("No progress found in localStorage");
             } 
-
-
+        
             // Set up event listener for task checkboxes
             document.addEventListener('change', (event) => {
                 if (event.target.classList.contains('task-checkbox')) {
@@ -165,7 +167,7 @@ window.app = function() {
                     this.handleTaskCheck(taskId, checked);
                 }
             });
-
+        
             // Check if running on iOS and apply fixes
             if (this.isIOS()) {
                 document.body.classList.add('ios-device');
@@ -178,27 +180,19 @@ window.app = function() {
                     }, 300);
                 });
             }
-             // Add scroll event listener
+            
+            // Add scroll event listener
             window.addEventListener('scroll', () => {
                 this.scrollPosition = window.scrollY;
                 if (this.scrollPosition <= 0) {
-                this.headerExpanded = false; // Reset when at top
+                    this.headerExpanded = false; // Reset when at top
                 }
             });
-            
-            // Listen for orientation changes
-            window.addEventListener('orientationchange', () => {
-                setTimeout(() => {
-                // Reset header state on orientation change
-                this.headerExpanded = false;
-                this.showCategories = window.innerWidth >= 768;
-                }, 300);
-            });
-
+        
             // Update layout for mobile/desktop
             this.updateLayoutClasses();
             },
-        
+    
             // Method to handle manual header expansion
             expandHeader() {
             this.headerExpanded = true;
@@ -208,18 +202,7 @@ window.app = function() {
             toggleCategories() {
             this.showCategories = !this.showCategories;
             },
-
-
-        // Check if browser is Safari
-        isSafari() {
-            return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-        },
-
-        // Check if device is iOS
-        isIOS() {
-            return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
-                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-        },
+        
 
         // Fix touch handling for iOS
         setupIOSTouchHandling() {
@@ -241,7 +224,6 @@ window.app = function() {
             }
         },
         
-        // Update layout classes based on screen size
         updateLayoutClasses() {
             if (window.innerWidth < 768) {
                 document.body.classList.add('mobile-layout');
@@ -254,7 +236,6 @@ window.app = function() {
             }
         },
         
-        // Set up event listeners
         setupEventListeners() {
             // Listen for auth state changes
             document.addEventListener('authStateChanged', async (e) => {
@@ -281,7 +262,14 @@ window.app = function() {
             
             // Listen for resize events to update layout
             window.addEventListener('resize', () => {
+                // Update mobile/desktop state
+                this.isMobile = window.innerWidth < 768;
                 this.updateLayoutClasses();
+                
+                // When resizing from mobile to desktop, ensure proper visibility
+                if (window.innerWidth >= 768) {
+                    this.showCategories = true;
+                }
             });
             
             // Close floating action menu when clicking outside
@@ -296,6 +284,7 @@ window.app = function() {
                 }
             });
         },
+        
         
         // Toggle dark mode
         toggleDarkMode() {
@@ -404,7 +393,10 @@ window.app = function() {
             }
         },
         
-        // Load sample data for offline usage
+                /**
+         * Enhanced loadSampleData function that loads tasks from all available weeks
+         * Replace your existing loadSampleData function with this one
+         */
         loadSampleData(completedTasks = {}) {
             try {
                 // First try to load tasks from a hardcoded array if fetch fails
@@ -436,59 +428,81 @@ window.app = function() {
                     }
                     // Add a few more basic tasks here
                 ];
-                // First try to process the fallback tasks directly
-                console.log("Using fallback task data");
-                this.processTasks(fallbackTasks, this.completedTasks);
-
-                // Then try to load from JSON as a backup
-                fetch('week1-tasks.json')
-                .then(response => response.text())
-                .then(text => {
-                    console.log("JSON response first 50 chars:", text.substring(0, 50));
-                    try {
-                        const data = JSON.parse(text);
-                        this.processTasks(data, this.completedTasks);
-                        console.log("Successfully loaded and processed JSON data");
-                    } catch (e) {
-                        console.error("Error parsing JSON:", e);
-                        // Already using fallback tasks, so no additional action needed
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading sample data:', error);
-                    // Already using fallback tasks, so no additional action needed
-                });
-
-                // Then try to fetch from file
-                fetch('week1-tasks.json')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.text(); // Get as text first to debug
-                })
-                .then(text => {
-                    try {
-                        console.log("JSON text received:", text.substring(0, 100) + "..."); // Log the first 100 chars
-                        const data = JSON.parse(text);
-                        this.processTasks(data, this.completedTasks);
-                    } catch (parseError) {
-                        console.error("JSON parse error:", parseError);
-                        // Fall back to the hardcoded tasks
-                        console.log("Using fallback task data due to parse error");
-                        this.processTasks(fallbackTasks, this.completedTasks);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading sample data:', error);
-                    // Fall back to the hardcoded tasks
-                    console.log("Using fallback task data due to fetch error");
-                    this.processTasks(fallbackTasks, this.completedTasks);
-                });
+                
+                console.log("Starting task data loading...");
+                
+                // Initialize an array to store all tasks
+                let allTasks = [];
+                
+                // Define the week files to attempt to load
+                const weekFiles = [
+                    'week1-tasks.json',
+                    'week2-tasks.json',
+                    'week3-tasks.json',
+                    'week4-tasks.json',
+                    'week5-tasks.json',
+                    'week6-tasks.json',
+                    'week7-tasks.json'
+                ];
+                
+                // Create an array of fetch promises
+                const fetchPromises = weekFiles.map(file => 
+                    fetch(file)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Failed to load ${file}: ${response.status} ${response.statusText}`);
+                        }
+                        return response.text();
+                    })
+                    .then(text => {
+                        try {
+                            console.log(`Successfully loaded ${file}`);
+                            return JSON.parse(text);
+                        } catch (parseError) {
+                            console.error(`Error parsing ${file}:`, parseError);
+                            return [];
+                        }
+                    })
+                    .catch(error => {
+                        console.warn(`Could not load ${file}:`, error.message);
+                        return []; // Return empty array for failed fetches
+                    })
+                );
+                
+                // Process all fetches
+                Promise.all(fetchPromises)
+                    .then(results => {
+                        // Combine all task arrays
+                        results.forEach(taskArray => {
+                            if (Array.isArray(taskArray) && taskArray.length > 0) {
+                                allTasks = [...allTasks, ...taskArray];
+                            }
+                        });
+                        
+                        console.log(`Loaded ${allTasks.length} tasks from all week files`);
+                        
+                        if (allTasks.length > 0) {
+                            // Process the combined tasks
+                            this.processTasks(allTasks, completedTasks);
+                        } else {
+                            // Fall back to hardcoded tasks if no files could be loaded
+                            console.log("No tasks loaded from files, using fallback tasks");
+                            this.processTasks(fallbackTasks, completedTasks);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error processing task files:", error);
+                        // Fall back to hardcoded tasks
+                        this.processTasks(fallbackTasks, completedTasks);
+                    });
+                
+                // Start with the fallback tasks while waiting for file loading
+                this.processTasks(fallbackTasks, completedTasks);
+                    
             } catch (error) {
                 console.error('Unexpected error in loadSampleData:', error);
                 // Still try to use the fallback tasks
-                this.processTasks(fallbackTasks, this.completedTasks);
+                this.processTasks(fallbackTasks, completedTasks);
             }
         },
         
